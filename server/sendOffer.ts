@@ -318,7 +318,8 @@ export async function handleSendOffer(request: Request): Promise<Response> {
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.EMAIL_FROM
   if (!apiKey || !from || !admin.to) {
-    console.error('Brak konfiguracji: RESEND_API_KEY, EMAIL_FROM lub ADMIN_EMAIL.')
+    const missing = [!apiKey && 'RESEND_API_KEY', !from && 'EMAIL_FROM', !admin.to && 'ADMIN_EMAIL'].filter(Boolean)
+    console.error(`Brak zmiennych środowiskowych: ${missing.join(', ')} (VERCEL_ENV=${process.env.VERCEL_ENV ?? '?'})`)
     return json(500, { ok: false, error: 'Wysyłka jest chwilowo niedostępna. Spróbujcie ponownie później.' })
   }
 
