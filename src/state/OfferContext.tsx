@@ -1,8 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { GROUP_CHANGE_MESSAGES, RECOMMENDED_SET, getService } from '../data/offer'
+import { PROPOSAL } from '../content/proposal'
+import { getService, groupChangeMessage } from '../lib/offer'
 import { orderSelection, sanitizeSelection, summarize, type OfferSummary } from '../lib/summary'
 
-const STORAGE_KEY = 'gw-offer-selection-v1'
+const STORAGE_KEY = `offer-selection:${PROPOSAL.id}`
 
 interface Toast {
   id: number
@@ -70,7 +71,7 @@ export function OfferProvider({ children }: { children: ReactNode }) {
       if (!service || selected.includes(id)) return
       const { next, replaced } = withService(selected, id)
       setSelected(next)
-      notify(replaced && service.exclusiveGroup ? GROUP_CHANGE_MESSAGES[service.exclusiveGroup] : 'Dodano do oferty')
+      notify(replaced ? groupChangeMessage(service) : 'Dodano do oferty')
     },
     [selected, notify],
   )
@@ -85,7 +86,7 @@ export function OfferProvider({ children }: { children: ReactNode }) {
   )
 
   const addRecommendedSet = useCallback(() => {
-    const next = RECOMMENDED_SET.reduce((acc, id) => withService(acc, id).next, selected)
+    const next = (PROPOSAL.recommended?.serviceIds ?? []).reduce((acc, id) => withService(acc, id).next, selected)
     setSelected(next)
     notify('Dodano rekomendowany zestaw')
   }, [selected, notify])

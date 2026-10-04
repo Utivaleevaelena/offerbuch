@@ -1,0 +1,34 @@
+/*
+ * KOLORY OFERTY — zmień, aby dopasować stronę do marki klienta.
+ *
+ * Nazwy zmiennych zostają takie same (navy, ivory, gold…), zmieniają się tylko wartości:
+ *   navy-*  — kolor główny (tła ciemnych sekcji, przyciski, nagłówki)
+ *   ivory   — tło strony
+ *   beige-* — delikatne tła i obramowania
+ *   gold-*  — akcent (numery etapów, wyróżnienia, ikony)
+ *   graphite / ink-muted — tekst
+ *
+ * Kolory w emailach: server/sendOffer.ts (stała C).
+ * Fonty: index.html (Google Fonts) + --font-serif / --font-sans w src/index.css.
+ */
+@theme {
+  --color-navy-950: #0b1625;
+  --color-navy-900: #13233a;
+  --color-navy-800: #1c3050;
+  --color-navy-700: #2a4268;
+  --color-navy-100: #e6eaf0;
+
+  --color-ivory: #faf7f1;
+  --color-ivory-deep: #f3eee4;
+  --color-beige: #e8dfcf;
+  --color-beige-deep: #d8cbb4;
+
+  --color-gold: #b39256;
+  --color-gold-light: #d6c193;
+  --color-gold-soft: #efe5d0;
+  --color-gold-ink: #7a5f2e;
+
+  --color-graphite: #22252a;
+  --color-ink-muted: #585c63;
+  --color-line: #e4dccd;
+}

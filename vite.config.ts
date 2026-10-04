@@ -1,6 +1,20 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { PROPOSAL } from './src/content/proposal'
+
+const escapeHtml = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+
+/** Wstawia tytuł i opis strony z treści oferty do index.html. */
+function proposalMeta(): Plugin {
+  return {
+    name: 'proposal-meta',
+    transformIndexHtml: (html) =>
+      html
+        .replace('%PROPOSAL_TITLE%', escapeHtml(PROPOSAL.meta.title))
+        .replace('%PROPOSAL_DESCRIPTION%', escapeHtml(PROPOSAL.meta.description)),
+  }
+}
 
 /**
  * W trybie deweloperskim obsługuje /api/send-offer tą samą funkcją,
@@ -39,5 +53,5 @@ function devApi(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), devApi()],
+  plugins: [react(), tailwindcss(), proposalMeta(), devApi()],
 })

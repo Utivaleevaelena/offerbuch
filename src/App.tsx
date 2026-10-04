@@ -1,4 +1,6 @@
-import { useId, useState } from 'react'
+import { Fragment, useId, useState } from 'react'
+import { PROPOSAL } from './content/proposal'
+import { STAGES } from './lib/offer'
 import { Closing, Footer } from './components/Closing'
 import { Dialog } from './components/Dialog'
 import { Goal } from './components/Goal'
@@ -6,10 +8,9 @@ import { Header } from './components/Header'
 import { Hero } from './components/Hero'
 import { MobileOfferBar } from './components/MobileOfferBar'
 import { OfferPanel } from './components/OfferSummary'
-import { OutreachStage } from './components/Outreach'
 import { RecommendedSet } from './components/RecommendedSet'
 import { SendOfferDialog } from './components/SendOfferDialog'
-import { BrandingStage, SessionStage, StrategyStage, WebsiteStage } from './components/Stages'
+import { StageSection } from './components/StageSection'
 import { Toast } from './components/Toast'
 
 export default function App() {
@@ -34,12 +35,12 @@ export default function App() {
 
         <div id="oferta" className="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12 lg:px-8 xl:grid-cols-[minmax(0,1fr)_24rem] xl:gap-16">
           <div className="min-w-0 divide-y divide-line/80">
-            <StrategyStage />
-            <BrandingStage />
-            <SessionStage />
-            <WebsiteStage />
-            <RecommendedSet />
-            <OutreachStage />
+            {STAGES.map((stage) => (
+              <Fragment key={stage.id}>
+                <StageSection stage={stage} />
+                {PROPOSAL.recommended?.afterStage === stage.id && <RecommendedSet />}
+              </Fragment>
+            ))}
             <Closing onSend={openSend} />
           </div>
 

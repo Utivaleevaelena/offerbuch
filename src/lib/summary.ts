@@ -1,4 +1,4 @@
-import { SERVICES, getCategory, getService, type ExclusiveGroup, type Service } from '../data/offer.js'
+import { SERVICES, getService, getStage, stageNumber, type Service } from './offer.js'
 
 export function formatPLN(value: number): string {
   // Polska notacja: spacja jako separator tysięcy (również dla liczb 4-cyfrowych).
@@ -12,7 +12,7 @@ export function formatPLN(value: number): string {
 export function sanitizeSelection(ids: unknown): string[] {
   if (!Array.isArray(ids)) return []
   const result: string[] = []
-  const usedGroups = new Set<ExclusiveGroup>()
+  const usedGroups = new Set<string>()
   for (const id of ids) {
     if (typeof id !== 'string') continue
     const service = getService(id)
@@ -54,8 +54,7 @@ export function summarize(ids: string[]): OfferSummary {
 }
 
 export function stageLabel(service: Service): string {
-  const category = getCategory(service.category)
-  return `Etap ${category.stage} · ${category.navLabel}`
+  return `Etap ${stageNumber(service.category)} · ${getStage(service.category).navLabel}`
 }
 
 export function priceLabel(service: Service): string {

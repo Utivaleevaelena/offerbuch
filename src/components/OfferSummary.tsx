@@ -1,4 +1,4 @@
-import { getCategory } from '../data/offer'
+import { getStage, stageNumber } from '../lib/offer'
 import { formatPLN, type OfferSummary as Summary } from '../lib/summary'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
@@ -17,12 +17,12 @@ export function SummaryLines({
   return (
     <ul className="divide-y divide-line">
       {summary.items.map((s) => {
-        const category = getCategory(s.category)
+        const stage = getStage(s.category)
         return (
           <li key={s.id} className="animate-fade-up flex items-start gap-3 py-3.5">
             <div className="min-w-0 flex-1">
               <p className="text-[0.68rem] font-bold tracking-[0.16em] text-gold-ink uppercase">
-                Etap {category.stage} · {category.navLabel}
+                Etap {stageNumber(s.category)} · {stage.navLabel}
               </p>
               <p className="mt-0.5 leading-snug font-semibold text-navy-900">{s.summaryTitle}</p>
               {s.variant && (
@@ -32,7 +32,7 @@ export function SummaryLines({
                     <>
                       {' · '}
                       <a
-                        href={`#${category.anchor}`}
+                        href={`#${stage.anchor}`}
                         onClick={onNavigate}
                         className="font-medium text-gold-ink underline-offset-4 hover:underline"
                       >
@@ -86,17 +86,17 @@ export function Totals({ summary }: { summary: Summary }) {
               </p>
             </div>
           )}
-          <div className="rounded-xl border border-gold/30 bg-gold-soft/60 p-3.5">
-            <p className="text-xs font-bold tracking-[0.18em] text-gold-ink uppercase">B2B Email Outreach</p>
-            {summary.monthlyItems.map((s) => (
-              <p key={s.id} className="mt-1 flex flex-wrap items-baseline justify-between gap-x-3">
-                <span className="font-semibold text-navy-900">{s.variant}</span>
+          {summary.monthlyItems.map((s) => (
+            <div key={s.id} className="rounded-xl border border-gold/30 bg-gold-soft/60 p-3.5">
+              <p className="text-xs font-bold tracking-[0.18em] text-gold-ink uppercase">{getStage(s.category).label}</p>
+              <p className="mt-1 flex flex-wrap items-baseline justify-between gap-x-3">
+                <span className="font-semibold text-navy-900">{s.variant ?? s.summaryTitle}</span>
                 <span className="font-semibold text-navy-900" aria-live="polite">
                   {formatPLN(s.priceNet)} <span className="text-sm font-medium text-ink-muted">netto / mies.</span>
                 </span>
               </p>
-            ))}
-          </div>
+            </div>
+          ))}
         </>
       )}
       <p className="text-xs text-ink-muted">Podane ceny są cenami netto.</p>

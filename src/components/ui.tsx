@@ -1,8 +1,26 @@
 import { useId, useState, type ReactNode } from 'react'
-import type { Service } from '../data/offer'
+import type { Service } from '../lib/offer'
 import { formatPLN } from '../lib/summary'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
+
+/** Renderuje tekst, wyróżniając fragmenty w *gwiazdkach*. */
+export function Emphasis({ text, className = 'text-gold-ink' }: { text: string; className?: string }) {
+  const parts = text.split(/\*([^*]+)\*/g)
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <em key={i} className={className}>
+            {part}
+          </em>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
 
 /** Wizualny proces: KROK → KROK → KROK. */
 export function ProcessFlow({

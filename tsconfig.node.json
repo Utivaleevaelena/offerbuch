@@ -13,5 +13,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["vite.config.ts", "api", "server", "src/data", "src/lib"]
+  "include": ["vite.config.ts", "api", "server", "src/content", "src/lib"]
 }

@@ -1,4 +1,4 @@
-import type { Service } from '../data/offer'
+import type { Service } from '../lib/offer'
 import { useOffer } from '../state/OfferContext'
 import { CheckList, Expandable, Price, ServiceAction, Tag } from './ui'
 

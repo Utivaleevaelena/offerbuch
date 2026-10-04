@@ -39,13 +39,19 @@ i nigdy nie trafiają do kodu frontendu.
 ## Struktura
 
 ```
-src/data/offer.ts            ← JEDYNE źródło cen, usług, wariantów i grup wykluczających się
+src/content/proposal.ts      ← CAŁA treść oferty: teksty, etapy, usługi, ceny, emaile
+src/content/types.ts         ← typy treści (opis wszystkich pól i bloków)
+src/theme.css                ← kolory marki
+src/lib/offer.ts             ← funkcje pomocnicze nad treścią
 src/lib/summary.ts           ← sumy, formatowanie PLN, walidacja wyboru (wspólne dla UI i serwera)
-src/state/OfferContext.tsx   ← stan wyboru, logika wariantów, toasty, localStorage
-src/components/              ← sekcje propozycji, karty, panel „Twoja oferta”, formularz
+src/state/OfferContext.tsx   ← stan wyboru, warianty, toasty, localStorage
+src/components/              ← uniwersalne sekcje (bez tekstów konkretnego klienta)
 server/sendOffer.ts          ← walidacja, treść emaili (tekst + HTML), wysyłka przez Resend
 api/send-offer.ts            ← Vercel Function: POST /api/send-offer
 ```
+
+**Szablon:** nowa oferta = kopia repozytorium + edycja `src/content/proposal.ts`
+(i opcjonalnie `src/theme.css`). Instrukcja krok po kroku: [TEMPLATE.md](TEMPLATE.md).
 
 ## Logika biznesowa
 
@@ -56,7 +62,7 @@ api/send-offer.ts            ← Vercel Function: POST /api/send-offer
 - „Rekomendowany zestaw” dodaje: strategię, Brand Guide PRO, sesję i Stronę PRO (bez B2B Outreach).
 - Wybór jest zapisywany w `localStorage` i przetrwa odświeżenie strony.
 - Serwer **nie ufa cenom z przeglądarki** — przyjmuje tylko identyfikatory usług i przelicza ceny
-  na podstawie `src/data/offer.ts`.
+  na podstawie `src/content/proposal.ts`.
 - Ekran sukcesu pojawia się dopiero po potwierdzeniu wysyłki przez serwer; przy błędzie wybór
   pozostaje nienaruszony.
 - Email do klienta (potwierdzenie) jest wysyłany po udanym emailu do administratora; jego ewentualny
@@ -64,5 +70,5 @@ api/send-offer.ts            ← Vercel Function: POST /api/send-offer
 
 ## Zmiana cen lub zakresu
 
-Edytuj wyłącznie `src/data/offer.ts` — interfejs, sumy, zestaw rekomendowany i treść emaili
+Edytuj wyłącznie `src/content/proposal.ts` — interfejs, sumy, zestaw rekomendowany i treść emaili
 zaktualizują się automatycznie.

@@ -1,21 +1,43 @@
 import { useEffect, useState } from 'react'
-import { CATEGORIES } from '../data/offer'
+import { PROPOSAL } from '../content/proposal'
+import { STAGES } from '../lib/offer'
 import { Icon } from './Icon'
 
-const NAV = [{ href: '#cel', label: 'Cel' }, ...CATEGORIES.map((c) => ({ href: `#${c.anchor}`, label: c.navLabel }))]
+const NAV = [
+  { href: '#cel', label: PROPOSAL.goal.navLabel },
+  ...STAGES.map((s) => ({ href: `#${s.anchor}`, label: s.navLabel })),
+]
+const FIRST_STAGE = `#${STAGES[0]?.anchor ?? 'oferta'}`
+
+/** Logo tekstowe — znaki „&” i „×” wyróżnione kolorem. */
+function LogoText({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/([&×])/).map((part, i) =>
+        part === '&' || part === '×' ? (
+          <span key={i} className="text-gold">
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
-    <a href="#top" className="group flex flex-col leading-none" aria-label="Gawin & Wojnowska — początek strony">
+    <a href="#top" className="group flex flex-col leading-none" aria-label={`${PROPOSAL.client.logo} — początek strony`}>
       <span
         className={`font-serif text-[1.15rem] font-semibold tracking-[0.08em] whitespace-nowrap sm:text-2xl sm:tracking-[0.12em] ${light ? 'text-ivory' : 'text-navy-900'}`}
       >
-        GAWIN <span className="text-gold">&amp;</span> WOJNOWSKA
+        <LogoText text={PROPOSAL.client.logo} />
       </span>
       <span
         className={`mt-1.5 text-[0.56rem] font-semibold tracking-[0.2em] whitespace-nowrap sm:text-[0.62rem] sm:tracking-[0.3em] ${light ? 'text-gold-light' : 'text-gold-ink'}`}
       >
-        KSIĘGOWOŚĆ • FINANSE • ROZWÓJ
+        {PROPOSAL.client.tagline}
       </span>
     </a>
   )
@@ -64,8 +86,8 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <a href="#strategia" className="btn-primary hidden min-h-11 px-5 text-sm sm:inline-flex">
-            Skonfiguruj ofertę
+          <a href={FIRST_STAGE} className="btn-primary hidden min-h-11 px-5 text-sm sm:inline-flex">
+            {PROPOSAL.headerCta}
           </a>
           <button
             type="button"
@@ -96,8 +118,8 @@ export function Header() {
               </li>
             ))}
           </ul>
-          <a href="#strategia" onClick={() => setMenuOpen(false)} className="btn-primary mt-4 w-full">
-            Skonfiguruj ofertę
+          <a href={FIRST_STAGE} onClick={() => setMenuOpen(false)} className="btn-primary mt-4 w-full">
+            {PROPOSAL.headerCta}
           </a>
         </nav>
       )}

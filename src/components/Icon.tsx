@@ -1,7 +1,8 @@
 import type { SVGProps } from 'react'
+import type { IconName } from '../content/types'
 
 /** Minimalistyczne ikony liniowe (stroke 1.5). */
-const PATHS = {
+const PATHS: Record<IconName, string> = {
   check: 'M5 12.5l4.5 4.5L19 7.5',
   plus: 'M12 5v14M5 12h14',
   close: 'M6 6l12 12M18 6L6 18',
@@ -29,9 +30,9 @@ const PATHS = {
   target: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7a5 5 0 100 10 5 5 0 000-10zM12 11a1 1 0 100 2 1 1 0 000-2z',
   users: 'M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2.5 20c.6-3.5 3.2-5.5 6.5-5.5s5.9 2 6.5 5.5M16 4.5a3.5 3.5 0 010 6.5M18 14.8c2 .7 3.2 2.4 3.5 5.2',
   document: 'M6 3h8l4 4v14H6V3zM14 3v4h4M9 12h6M9 16h6',
-} as const
+}
 
-export type IconName = keyof typeof PATHS
+export type { IconName }
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName

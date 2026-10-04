@@ -9,11 +9,12 @@
  * Ceny NIE są przyjmowane od klienta — serwer przelicza je na podstawie
  * identyfikatorów usług i wspólnego pliku konfiguracyjnego oferty.
  */
+import { PROPOSAL } from '../src/content/proposal.js'
 import { formatPLN, sanitizeSelection, stageLabel, summarize, type OfferSummary } from '../src/lib/summary.js'
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails'
-const ADMIN_SUBJECT = 'Nowa konfiguracja oferty — Gawin & Wojnowska'
-const CLIENT_SUBJECT = 'Dziękujemy — otrzymaliśmy wybrany zakres współpracy'
+const ADMIN_SUBJECT = PROPOSAL.emails.adminSubject
+const CLIENT_SUBJECT = PROPOSAL.emails.clientSubject
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 interface Contact {
@@ -128,16 +129,13 @@ function clientText(contact: Contact, summary: OfferSummary): string {
   return [
     `Dzień dobry ${contact.name},`,
     '',
-    'Dziękujemy za przesłanie konfiguracji.',
-    '',
-    'Otrzymaliśmy wybrany przez Was zakres współpracy i skontaktujemy się, aby potwierdzić szczegóły oraz ustalić kolejne kroki.',
-    '',
+    ...PROPOSAL.emails.clientIntro.flatMap((p) => [p, '']),
     'WYBRANY ZAKRES:',
     '',
     scopeText(summary),
     '',
     'Z pozdrowieniami,',
-    'PiXEL EXPERTS TEAM',
+    PROPOSAL.emails.signature,
   ].join('\n')
 }
 
@@ -192,11 +190,11 @@ function layout(title: string, body: string): string {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid ${C.line};border-radius:16px;">
       <tr><td style="padding:24px 28px;background:${C.navy};border-radius:16px 16px 0 0;">
-        <div style="font-family:Georgia,serif;font-size:20px;letter-spacing:.08em;color:#faf7f1;">GAWIN &amp; WOJNOWSKA</div>
-        <div style="font-size:10px;letter-spacing:.24em;color:#d6c193;margin-top:4px;">KSIĘGOWOŚĆ • FINANSE • ROZWÓJ</div>
+        <div style="font-family:Georgia,serif;font-size:20px;letter-spacing:.08em;color:#faf7f1;">${escapeHtml(PROPOSAL.client.logo)}</div>
+        <div style="font-size:10px;letter-spacing:.24em;color:#d6c193;margin-top:4px;">${escapeHtml(PROPOSAL.client.tagline)}</div>
       </td></tr>
       <tr><td style="padding:28px;">${body}</td></tr>
-      <tr><td style="padding:16px 28px;border-top:1px solid ${C.line};font-size:12px;color:${C.muted};">Propozycja współpracy przygotowana przez PiXEL EXPERTS TEAM</td></tr>
+      <tr><td style="padding:16px 28px;border-top:1px solid ${C.line};font-size:12px;color:${C.muted};">Propozycja współpracy przygotowana przez ${escapeHtml(PROPOSAL.agency.name)}</td></tr>
     </table>
   </td></tr></table>
 </body></html>`
@@ -227,14 +225,15 @@ function adminHtml(contact: Contact, summary: OfferSummary, ids: string[], sentA
 }
 
 function clientHtml(contact: Contact, summary: OfferSummary): string {
+  const [headline = '', ...paragraphs] = PROPOSAL.emails.clientIntro
   return layout(
     CLIENT_SUBJECT,
-    `<h1 style="margin:0 0 16px;font-family:Georgia,serif;font-weight:normal;font-size:24px;color:${C.navy};">Dziękujemy za przesłanie konfiguracji.</h1>
+    `<h1 style="margin:0 0 16px;font-family:Georgia,serif;font-weight:normal;font-size:24px;color:${C.navy};">${escapeHtml(headline)}</h1>
      <p style="margin:0 0 8px;font-size:15px;line-height:1.6;">Dzień dobry ${escapeHtml(contact.name)},</p>
-     <p style="margin:0 0 24px;font-size:15px;line-height:1.6;">Otrzymaliśmy wybrany przez Was zakres współpracy i skontaktujemy się, aby potwierdzić szczegóły oraz ustalić kolejne kroki.</p>
+     ${paragraphs.map((p) => `<p style="margin:0 0 24px;font-size:15px;line-height:1.6;">${escapeHtml(p)}</p>`).join('')}
      <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:${C.gold};margin-bottom:4px;">Wybrany zakres</div>
      ${scopeHtml(summary)}
-     <p style="margin:28px 0 0;font-size:15px;line-height:1.6;">Z pozdrowieniami,<br><strong>PiXEL EXPERTS TEAM</strong></p>`,
+     <p style="margin:28px 0 0;font-size:15px;line-height:1.6;">Z pozdrowieniami,<br><strong>${escapeHtml(PROPOSAL.emails.signature)}</strong></p>`,
   )
 }
 

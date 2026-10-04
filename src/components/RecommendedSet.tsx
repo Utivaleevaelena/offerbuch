@@ -1,11 +1,14 @@
-import { RECOMMENDED_LABELS, RECOMMENDED_SET, getService } from '../data/offer'
+import { PROPOSAL } from '../content/proposal'
+import { getService } from '../lib/offer'
 import { formatPLN } from '../lib/summary'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
 
 export function RecommendedSet() {
   const { addRecommendedSet, isSelected } = useOffer()
-  const items = RECOMMENDED_SET.map((id) => getService(id)!)
+  const rec = PROPOSAL.recommended
+  if (!rec) return null
+  const items = rec.serviceIds.map((id) => getService(id)!)
   const total = items.reduce((sum, s) => sum + s.priceNet, 0)
   const allSelected = items.every((s) => isSelected(s.id))
 
@@ -15,14 +18,11 @@ export function RecommendedSet() {
         <div aria-hidden="true" className="absolute -right-24 -bottom-24 size-72 rounded-full bg-gold/15 blur-3xl" />
         <div className="relative grid gap-10 xl:grid-cols-[0.9fr_1.1fr] xl:items-center">
           <div>
-            <p className="text-xs font-semibold tracking-[0.22em] text-gold-light uppercase">Nie wiesz, od czego zacząć?</p>
+            <p className="text-xs font-semibold tracking-[0.22em] text-gold-light uppercase">{rec.eyebrow}</p>
             <h2 id="recommended-title" className="mt-4 text-[2.2rem] !text-ivory sm:text-[2.6rem]">
-              Rekomendowany zestaw
+              {rec.title}
             </h2>
-            <p className="mt-4 text-ivory/75">
-              Fundament marki w jednym kroku: strategia, pełna identyfikacja, profesjonalne materiały i strona przygotowana pod
-              klientów B2B.
-            </p>
+            <p className="mt-4 text-ivory/75">{rec.text}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
@@ -35,7 +35,7 @@ export function RecommendedSet() {
                       size={18}
                       className={isSelected(s.id) ? 'text-gold-light' : 'text-ivory/30'}
                     />
-                    {RECOMMENDED_LABELS[s.id] ?? s.summaryTitle}
+                    {rec.labels?.[s.id] ?? s.summaryTitle}
                     {isSelected(s.id) && <span className="sr-only">(już w Twojej ofercie)</span>}
                   </span>
                   <span className="font-semibold whitespace-nowrap">{formatPLN(s.priceNet)}</span>
@@ -55,14 +55,16 @@ export function RecommendedSet() {
               className="btn-gold mt-6 w-full disabled:opacity-80"
             >
               <Icon name={allSelected ? 'check' : 'plus'} size={18} />
-              {allSelected ? 'Zestaw jest w Twojej ofercie' : 'Dodaj rekomendowany zestaw'}
+              {allSelected ? 'Zestaw jest w Twojej ofercie' : rec.cta}
             </button>
           </div>
         </div>
-        <p className="relative mt-8 flex gap-3 border-t border-white/10 pt-6 text-sm text-ivory/70">
-          <Icon name="arrowRight" size={18} className="mt-0.5 shrink-0 text-gold-light" />
-          Po przygotowaniu marki i strony możemy uruchomić B2B Email Outreach jako kolejny etap.
-        </p>
+        {rec.footnote && (
+          <p className="relative mt-8 flex gap-3 border-t border-white/10 pt-6 text-sm text-ivory/70">
+            <Icon name="arrowRight" size={18} className="mt-0.5 shrink-0 text-gold-light" />
+            {rec.footnote}
+          </p>
+        )}
       </div>
     </section>
   )
