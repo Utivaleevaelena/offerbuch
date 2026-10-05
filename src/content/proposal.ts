@@ -6,7 +6,7 @@
  * Tu są wszystkie teksty, etapy, usługi, ceny i treść emaili.
  * Instrukcja: TEMPLATE.md. Kolory: src/theme.css.
  */
-import type { Proposal, Service, Stage } from './types'
+import type { Proposal, Service, Stage } from './types.js'
 
 const services: Service[] = [
   // ───────────────────────── ETAP 1 ─────────────────────────

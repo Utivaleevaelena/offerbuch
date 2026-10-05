@@ -1,14 +1,14 @@
-import { PROPOSAL } from '../content/proposal'
+import { useI18n } from '../i18n/I18nContext'
 import { getService } from '../lib/offer'
-import { formatPLN } from '../lib/summary'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
 
 export function RecommendedSet() {
   const { addRecommendedSet, isSelected } = useOffer()
-  const rec = PROPOSAL.recommended
+  const { proposal, t, price } = useI18n()
+  const rec = proposal.recommended
   if (!rec) return null
-  const items = rec.serviceIds.map((id) => getService(id)!)
+  const items = rec.serviceIds.map((id) => getService(id, proposal)!)
   const total = items.reduce((sum, s) => sum + s.priceNet, 0)
   const allSelected = items.every((s) => isSelected(s.id))
 
@@ -36,16 +36,16 @@ export function RecommendedSet() {
                       className={isSelected(s.id) ? 'text-gold-light' : 'text-ivory/30'}
                     />
                     {rec.labels?.[s.id] ?? s.summaryTitle}
-                    {isSelected(s.id) && <span className="sr-only">(już w Twojej ofercie)</span>}
+                    {isSelected(s.id) && <span className="sr-only">{t.alreadyInOffer}</span>}
                   </span>
-                  <span className="font-semibold whitespace-nowrap">{formatPLN(s.priceNet)}</span>
+                  <span className="font-semibold whitespace-nowrap">{price(s.priceNet)}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-3 flex items-baseline justify-between gap-4 border-t border-gold-light/30 pt-4">
-              <span className="text-xs font-semibold tracking-[0.18em] text-gold-light uppercase">Razem</span>
+              <span className="text-xs font-semibold tracking-[0.18em] text-gold-light uppercase">{t.total}</span>
               <span className="font-serif text-3xl font-semibold">
-                {formatPLN(total)} <span className="font-sans text-sm font-medium text-ivory/70">netto</span>
+                {price(total)} <span className="font-sans text-sm font-medium text-ivory/70">{t.net}</span>
               </span>
             </div>
             <button
@@ -55,7 +55,7 @@ export function RecommendedSet() {
               className="btn-gold mt-6 w-full disabled:opacity-80"
             >
               <Icon name={allSelected ? 'check' : 'plus'} size={18} />
-              {allSelected ? 'Zestaw jest w Twojej ofercie' : rec.cta}
+              {allSelected ? t.setInOffer : rec.cta}
             </button>
           </div>
         </div>

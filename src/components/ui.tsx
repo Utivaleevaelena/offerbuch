@@ -1,6 +1,6 @@
 import { useId, useState, type ReactNode } from 'react'
 import type { Service } from '../lib/offer'
-import { formatPLN } from '../lib/summary'
+import { useI18n } from '../i18n/I18nContext'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
 
@@ -58,7 +58,7 @@ export function ProcessFlow({
 
 /** Rozwijana sekcja „Co obejmuje?”. */
 export function Expandable({
-  title = 'Co obejmuje?',
+  title,
   children,
   defaultOpen = false,
 }: {
@@ -66,6 +66,7 @@ export function Expandable({
   children: ReactNode
   defaultOpen?: boolean
 }) {
+  const { t } = useI18n()
   const [open, setOpen] = useState(defaultOpen)
   const id = useId()
   return (
@@ -77,7 +78,7 @@ export function Expandable({
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between gap-4 py-4 text-left text-[0.95rem] font-semibold text-navy-900 transition-colors hover:text-gold-ink"
       >
-        {title}
+        {title ?? t.whatsIncluded}
         <span
           className={`grid size-8 place-items-center rounded-full border border-line transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
         >
@@ -124,12 +125,13 @@ export function Tag({ children, tone = 'gold' }: { children: ReactNode; tone?: '
 }
 
 export function Price({ service, large = false }: { service: Service; large?: boolean }) {
+  const { t, price } = useI18n()
   return (
     <p className="flex flex-wrap items-baseline gap-x-1.5">
       <span className={`font-serif font-semibold text-navy-900 ${large ? 'text-4xl sm:text-[2.6rem]' : 'text-3xl'}`}>
-        {formatPLN(service.priceNet)}
+        {price(service.priceNet)}
       </span>
-      <span className="text-sm font-medium text-ink-muted">netto{service.billing === 'monthly' ? ' / miesiąc' : ''}</span>
+      <span className="text-sm font-medium text-ink-muted">{service.billing === 'monthly' ? t.perMonth : t.net}</span>
     </p>
   )
 }
@@ -137,6 +139,7 @@ export function Price({ service, large = false }: { service: Service; large?: bo
 /** Przycisk dodawania usługi + stan „Dodano” i możliwość usunięcia. */
 export function ServiceAction({ service, full = false }: { service: Service; full?: boolean }) {
   const { isSelected, add, remove } = useOffer()
+  const { t } = useI18n()
   const selected = isSelected(service.id)
   const width = full ? 'w-full sm:w-auto' : ''
   return (
@@ -145,16 +148,16 @@ export function ServiceAction({ service, full = false }: { service: Service; ful
         <>
           <span className="btn-selected px-5">
             <Icon name="check" size={18} className="text-gold-ink" />
-            Dodano do oferty
+            {t.addedToOffer}
           </span>
           <button
             type="button"
             onClick={() => remove(service.id)}
             className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-2 text-sm font-medium text-ink-muted underline-offset-4 hover:text-navy-900 hover:underline"
-            aria-label={`Usuń z oferty: ${service.summaryTitle}`}
+            aria-label={t.removeFromOffer(service.summaryTitle)}
           >
             <Icon name="close" size={16} />
-            Usuń
+            {t.remove}
           </button>
         </>
       ) : (
@@ -180,6 +183,7 @@ export function StageHeader({
   intro?: ReactNode
   aside?: ReactNode
 }) {
+  const { t } = useI18n()
   return (
     <header className="mb-8 sm:mb-10">
       <div className="mb-5 flex items-center gap-4">
@@ -188,7 +192,9 @@ export function StageHeader({
         </span>
         <span className="h-px flex-1 bg-gradient-to-r from-gold/50 to-transparent" />
         <span className="eyebrow">
-          <span className="sr-only">Etap {stage}: </span>
+          <span className="sr-only">
+            {t.stage} {stage}:{' '}
+          </span>
           {eyebrow}
         </span>
       </div>

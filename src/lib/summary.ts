@@ -1,12 +1,7 @@
-import { SERVICES, getService, getStage, stageNumber, type Service } from './offer.js'
-
-export function formatPLN(value: number): string {
-  // Polska notacja: spacja jako separator tysięcy (również dla liczb 4-cyfrowych).
-  const digits = Math.round(value)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-  return `${digits} zł`
-}
+import { PROPOSAL } from '../content/proposal.js'
+import type { Proposal, Service } from '../content/types.js'
+import { DEFAULT_LANG, UI, type Lang } from '../i18n/ui.js'
+import { SERVICES, getService, getStage, stageNumber } from './offer.js'
 
 /** Usuwa nieznane identyfikatory i duplikaty, wymusza wykluczanie się wariantów. */
 export function sanitizeSelection(ids: unknown): string[] {
@@ -40,8 +35,9 @@ export interface OfferSummary {
   monthlyTotal: number
 }
 
-export function summarize(ids: string[]): OfferSummary {
-  const items = sanitizeSelection(ids).map((id) => getService(id)!)
+/** Podsumowanie wyboru; usługi w języku przekazanej oferty. */
+export function summarize(ids: string[], p: Proposal = PROPOSAL): OfferSummary {
+  const items = sanitizeSelection(ids).map((id) => getService(id, p)!)
   const oneTimeItems = items.filter((s) => s.billing === 'one_time')
   const monthlyItems = items.filter((s) => s.billing === 'monthly')
   return {
@@ -53,12 +49,7 @@ export function summarize(ids: string[]): OfferSummary {
   }
 }
 
-export function stageLabel(service: Service): string {
-  return `Etap ${stageNumber(service.category)} · ${getStage(service.category).navLabel}`
-}
-
-export function priceLabel(service: Service): string {
-  return service.billing === 'monthly'
-    ? `${formatPLN(service.priceNet)} netto / mies.`
-    : `${formatPLN(service.priceNet)} netto`
+/** „Etap 2 · Branding” / „Stage 2 · Branding”. */
+export function stageLabel(service: Service, p: Proposal = PROPOSAL, lang: Lang = DEFAULT_LANG): string {
+  return `${UI[lang].stage} ${stageNumber(service.category)} · ${getStage(service.category, p).navLabel}`
 }

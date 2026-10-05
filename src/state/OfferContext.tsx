@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { PROPOSAL } from '../content/proposal'
-import { getService, groupChangeMessage } from '../lib/offer'
+import { useI18n } from '../i18n/I18nContext'
+import { getService, getStage } from '../lib/offer'
 import { orderSelection, sanitizeSelection, summarize, type OfferSummary } from '../lib/summary'
 
 const STORAGE_KEY = `offer-selection:${PROPOSAL.id}`
@@ -47,6 +48,7 @@ function withService(current: string[], id: string): { next: string[]; replaced:
 }
 
 export function OfferProvider({ children }: { children: ReactNode }) {
+  const { t, proposal } = useI18n()
   const [selected, setSelected] = useState<string[]>(readStored)
   const [toast, setToast] = useState<Toast | null>(null)
   const toastTimer = useRef<number | undefined>(undefined)
@@ -71,30 +73,32 @@ export function OfferProvider({ children }: { children: ReactNode }) {
       if (!service || selected.includes(id)) return
       const { next, replaced } = withService(selected, id)
       setSelected(next)
-      notify(replaced ? groupChangeMessage(service) : 'Dodano do oferty')
+      notify(
+        replaced ? (getStage(service.category, proposal).options?.changeMessage ?? t.toastVariantChanged) : t.toastAdded,
+      )
     },
-    [selected, notify],
+    [selected, notify, proposal, t],
   )
 
   const remove = useCallback(
     (id: string) => {
       if (!selected.includes(id)) return
       setSelected(selected.filter((s) => s !== id))
-      notify('Usunięto z oferty')
+      notify(t.toastRemoved)
     },
-    [selected, notify],
+    [selected, notify, t],
   )
 
   const addRecommendedSet = useCallback(() => {
     const next = (PROPOSAL.recommended?.serviceIds ?? []).reduce((acc, id) => withService(acc, id).next, selected)
     setSelected(next)
-    notify('Dodano rekomendowany zestaw')
-  }, [selected, notify])
+    notify(t.toastSetAdded)
+  }, [selected, notify, t])
 
   const value = useMemo<OfferContextValue>(
     () => ({
       selected,
-      summary: summarize(selected),
+      summary: summarize(selected, proposal),
       isSelected: (id) => selected.includes(id),
       add,
       remove,
@@ -102,7 +106,7 @@ export function OfferProvider({ children }: { children: ReactNode }) {
       toast,
       notify,
     }),
-    [selected, add, remove, addRecommendedSet, toast, notify],
+    [selected, add, remove, addRecommendedSet, toast, notify, proposal],
   )
 
   return <OfferContext.Provider value={value}>{children}</OfferContext.Provider>

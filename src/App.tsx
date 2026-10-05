@@ -1,6 +1,5 @@
 import { Fragment, useId, useState } from 'react'
-import { PROPOSAL } from './content/proposal'
-import { STAGES } from './lib/offer'
+import { useI18n } from './i18n/I18nContext'
 import { Closing, Footer } from './components/Closing'
 import { Dialog } from './components/Dialog'
 import { Goal } from './components/Goal'
@@ -17,6 +16,7 @@ export default function App() {
   const [sendOpen, setSendOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const drawerTitleId = useId()
+  const { proposal, t } = useI18n()
 
   const openSend = () => {
     setDrawerOpen(false)
@@ -26,7 +26,7 @@ export default function App() {
   return (
     <>
       <a href="#oferta" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:rounded-full focus:bg-navy-900 focus:px-4 focus:py-2 focus:text-ivory">
-        Przejdź do konfiguratora
+        {t.skipToConfigurator}
       </a>
       <Header />
       <main>
@@ -35,16 +35,16 @@ export default function App() {
 
         <div id="oferta" className="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12 lg:px-8 xl:grid-cols-[minmax(0,1fr)_24rem] xl:gap-16">
           <div className="min-w-0 divide-y divide-line/80">
-            {STAGES.map((stage) => (
+            {proposal.stages.map((stage) => (
               <Fragment key={stage.id}>
                 <StageSection stage={stage} />
-                {PROPOSAL.recommended?.afterStage === stage.id && <RecommendedSet />}
+                {proposal.recommended?.afterStage === stage.id && <RecommendedSet />}
               </Fragment>
             ))}
             <Closing onSend={openSend} />
           </div>
 
-          <aside aria-label="Twoja oferta" className="hidden lg:block">
+          <aside aria-label={t.yourOffer} className="hidden lg:block">
             <div className="sticky top-28 py-16">
               <div className="card max-h-[calc(100dvh-9rem)] overflow-y-auto p-6">
                 <OfferPanel onSend={openSend} headingId="offer-panel-title" />

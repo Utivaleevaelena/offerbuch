@@ -1,5 +1,5 @@
+import { useI18n } from '../i18n/I18nContext'
 import { priceRange, servicesInStage, stageNumber, type Service, type Stage } from '../lib/offer'
-import { formatPLN } from '../lib/summary'
 import { Blocks } from './Blocks'
 import { Icon } from './Icon'
 import { OptionCard } from './OptionCard'
@@ -7,8 +7,9 @@ import { CheckList, Emphasis, Expandable, Price, ServiceAction, StageHeader, Tag
 
 /** Jeden etap oferty — w całości budowany z danych w src/content/proposal.ts. */
 export function StageSection({ stage }: { stage: Stage }) {
+  const { proposal, t, price } = useI18n()
   const number = stageNumber(stage.id)
-  const services = servicesInStage(stage.id)
+  const services = servicesInStage(stage.id, proposal)
   const single = services.length === 1
   const options = stage.options
   const range = priceRange(stage.id)
@@ -20,7 +21,7 @@ export function StageSection({ stage }: { stage: Stage }) {
           <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm">
             <span className="text-ink-muted">Szacunkowy budżet:</span>
             <strong className="font-semibold text-navy-900">
-              {formatPLN(range.min).replace(' zł', '')}–{formatPLN(range.max)} netto
+              {price(range.min)} – {price(range.max)} {t.net}
             </strong>
           </span>
         )}
@@ -31,7 +32,7 @@ export function StageSection({ stage }: { stage: Stage }) {
   return (
     <section
       id={stage.anchor}
-      aria-label={`Etap ${number}: ${stage.label}`}
+      aria-label={`${t.stage} ${number}: ${stage.label}`}
       className="scroll-mt-24 py-16 sm:py-20"
     >
       <StageHeader

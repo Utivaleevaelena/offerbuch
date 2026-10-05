@@ -1,9 +1,11 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { useI18n } from '../i18n/I18nContext'
+import type { UiStrings } from '../i18n/ui'
 import { summarize, type OfferSummary } from '../lib/summary'
 import { useOffer } from '../state/OfferContext'
 import { Dialog } from './Dialog'
 import { Icon } from './Icon'
-import { SummaryLines, Totals, pluralModules } from './OfferSummary'
+import { SummaryLines, Totals } from './OfferSummary'
 
 interface FormState {
   name: string
@@ -20,17 +22,18 @@ type Errors = Partial<Record<'name' | 'email' | 'consent', string>>
 const EMPTY: FormState = { name: '', company: '', email: '', phone: '', message: '', consent: false, website: '' }
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-function validate(form: FormState): Errors {
+function validate(form: FormState, t: UiStrings): Errors {
   const errors: Errors = {}
-  if (!form.name.trim()) errors.name = 'Podaj imię i nazwisko.'
-  if (!form.email.trim()) errors.email = 'Podaj adres email.'
-  else if (!EMAIL_RE.test(form.email.trim())) errors.email = 'Podaj poprawny adres email.'
-  if (!form.consent) errors.consent = 'Zaznacz zgodę, abyśmy mogli się z Wami skontaktować.'
+  if (!form.name.trim()) errors.name = t.errName
+  if (!form.email.trim()) errors.email = t.errEmailEmpty
+  else if (!EMAIL_RE.test(form.email.trim())) errors.email = t.errEmail
+  if (!form.consent) errors.consent = t.errConsent
   return errors
 }
 
 export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { selected, summary } = useOffer()
+  const { lang, proposal, t } = useI18n()
   const [form, setForm] = useState<FormState>(EMPTY)
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle')
@@ -54,7 +57,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    const found = validate(form)
+    const found = validate(form, t)
     setErrors(found)
     if (Object.keys(found).length) {
       const first = Object.keys(found)[0]
@@ -78,21 +81,22 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
           },
           consent: form.consent,
           selectedIds: selected,
+          lang,
           website: form.website,
         }),
       })
       const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null
       if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || 'Nie udało się wysłać konfiguracji. Spróbujcie ponownie za chwilę.')
+        throw new Error(data?.error || t.errSend)
       }
-      setSent(summarize(selected))
+      setSent(summarize(selected, proposal))
       setStatus('idle')
     } catch (err) {
       // Wybór usług pozostaje nienaruszony — można spróbować ponownie.
       setStatus('error')
       setServerError(
         err instanceof TypeError
-          ? 'Brak połączenia z serwerem. Sprawdźcie połączenie i spróbujcie ponownie.'
+          ? t.errNetwork
           : (err as Error).message,
       )
     }
@@ -104,15 +108,15 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
         <SuccessView titleId={titleId} summary={sent} onBack={onClose} />
       ) : (
         <div className="p-6 pt-16 sm:p-10">
-          <p className="eyebrow">Ostatni krok</p>
+          <p className="eyebrow">{t.lastStep}</p>
           <h2 id={titleId} className="mt-3 pr-8 text-[2rem] sm:text-[2.3rem]">
-            Wyślij nam wybrany zakres współpracy
+            {t.formTitle}
           </h2>
 
           <details className="group mt-6 rounded-2xl border border-line bg-white">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 text-sm font-semibold text-navy-900 [&::-webkit-details-marker]:hidden">
               <span>
-                Wybrany zakres: {summary.items.length} {pluralModules(summary.items.length)}
+                {t.scopeCount(summary.items.length)}
               </span>
               <Icon name="chevronDown" size={16} className="transition-transform group-open:rotate-180" />
             </summary>
@@ -126,7 +130,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
 
           <form ref={formRef} noValidate onSubmit={handleSubmit} className="mt-7 space-y-5">
             <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Imię i nazwisko" required error={errors.name}>
+              <Field label={t.fieldName} required error={errors.name}>
                 {(props) => (
                   <input
                     {...props}
@@ -137,7 +141,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
                   />
                 )}
               </Field>
-              <Field label="Firma">
+              <Field label={t.fieldCompany}>
                 {(props) => (
                   <input
                     {...props}
@@ -148,7 +152,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
                   />
                 )}
               </Field>
-              <Field label="Email" required error={errors.email}>
+              <Field label={t.fieldEmail} required error={errors.email}>
                 {(props) => (
                   <input
                     {...props}
@@ -161,7 +165,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
                   />
                 )}
               </Field>
-              <Field label="Telefon">
+              <Field label={t.fieldPhone}>
                 {(props) => (
                   <input
                     {...props}
@@ -175,13 +179,13 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
                 )}
               </Field>
             </div>
-            <Field label="Dodatkowa wiadomość">
+            <Field label={t.fieldMessage}>
               {(props) => (
                 <textarea
                   {...props}
                   name="message"
                   rows={4}
-                  placeholder="Jeśli chcecie coś zmienić lub dodać do zakresu, napiszcie tutaj."
+                  placeholder={t.messagePlaceholder}
                   value={form.message}
                   onChange={(e) => set('message', e.target.value)}
                 />
@@ -208,7 +212,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
                   className="mt-1 size-5 shrink-0 cursor-pointer accent-navy-900"
                 />
                 <span>
-                  Wyrażam zgodę na kontakt w sprawie przesłanej konfiguracji oferty.{' '}
+                  {t.consent}{' '}
                   <span className="text-gold-ink" aria-hidden="true">
                     *
                   </span>
@@ -225,23 +229,23 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
               <div role="alert" className="flex gap-3 rounded-xl border border-[#e3c4bf] bg-[#fbf1ef] p-4 text-sm text-[#7d3a32]">
                 <Icon name="info" size={18} className="mt-0.5 shrink-0" />
                 <span>
-                  {serverError} Wybrany zakres został zachowany.
+                  {serverError} {t.scopeKept}
                 </span>
               </div>
             )}
 
             <div className="flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-ink-muted">* pola wymagane</p>
+              <p className="text-xs text-ink-muted">{t.requiredFields}</p>
               <button type="submit" className="btn-primary w-full sm:w-auto" disabled={status === 'sending' || summary.items.length === 0}>
                 {status === 'sending' ? (
                   <>
                     <span className="size-4 animate-spin rounded-full border-2 border-ivory/30 border-t-ivory" aria-hidden="true" />
-                    Wysyłanie…
+                    {t.sending}
                   </>
                 ) : (
                   <>
                     <Icon name="send" size={18} />
-                    Wyślij wybraną ofertę
+                    {t.sendOffer}
                   </>
                 )}
               </button>
@@ -302,6 +306,7 @@ function Field({
 }
 
 function SuccessView({ titleId, summary, onBack }: { titleId: string; summary: OfferSummary; onBack: () => void }) {
+  const { t } = useI18n()
   const headingRef = useRef<HTMLHeadingElement>(null)
   useEffect(() => headingRef.current?.focus(), [])
   return (
@@ -310,13 +315,13 @@ function SuccessView({ titleId, summary, onBack }: { titleId: string; summary: O
         <Icon name="check" size={28} />
       </span>
       <h2 id={titleId} ref={headingRef} tabIndex={-1} className="mt-6 text-[2.4rem] outline-none">
-        Dziękujemy!
+        {t.thanks}
       </h2>
-      <p className="mt-3 text-lg text-navy-900">Otrzymaliśmy wybraną konfigurację.</p>
-      <p className="mt-2 text-ink-muted">Skontaktujemy się z Wami, aby omówić szczegóły i zaplanować kolejne kroki.</p>
+      <p className="mt-3 text-lg text-navy-900">{t.received}</p>
+      <p className="mt-2 text-ink-muted">{t.willContact}</p>
 
       <div className="mt-8 rounded-2xl border border-line bg-white p-5">
-        <p className="text-xs font-bold tracking-[0.18em] text-ink-muted uppercase">Przesłany zakres</p>
+        <p className="text-xs font-bold tracking-[0.18em] text-ink-muted uppercase">{t.sentScope}</p>
         <SummaryLines summary={summary} />
         <div className="border-t border-line pt-4">
           <Totals summary={summary} />
@@ -324,7 +329,7 @@ function SuccessView({ titleId, summary, onBack }: { titleId: string; summary: O
       </div>
 
       <button type="button" onClick={onBack} className="btn-primary mt-8 w-full sm:w-auto">
-        Wróć do oferty
+        {t.backToOffer}
       </button>
     </div>
   )

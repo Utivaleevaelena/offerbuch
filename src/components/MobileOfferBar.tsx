@@ -1,11 +1,11 @@
-import { formatPLN } from '../lib/summary'
+import { useI18n } from '../i18n/I18nContext'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
-import { pluralModules } from './OfferSummary'
 
 /** Przyklejony pasek „Twoja oferta” na telefonach i tabletach. */
 export function MobileOfferBar({ onOpen, expanded }: { onOpen: () => void; expanded: boolean }) {
   const { summary } = useOffer()
+  const { t, price } = useI18n()
   const count = summary.items.length
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-ivory/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-12px_32px_-18px_rgb(19_35_58/0.35)] backdrop-blur-md lg:hidden">
@@ -18,13 +18,13 @@ export function MobileOfferBar({ onOpen, expanded }: { onOpen: () => void; expan
       >
         <span className="min-w-0">
           <span className="block truncate text-[0.95rem] font-semibold">
-            Twoja oferta • {formatPLN(summary.oneTimeTotal)} netto
+            {t.yourOffer} • {price(summary.oneTimeTotal)} {t.net}
           </span>
           <span className="block truncate text-xs text-ivory/70">
             {count === 0
-              ? 'Nie wybrano jeszcze modułów'
-              : `${count} ${pluralModules(count)}${
-                  summary.monthlyTotal ? ` • + ${formatPLN(summary.monthlyTotal)} netto / mies.` : ''
+              ? t.noModulesYet
+              : `${count} ${t.modules(count)}${
+                  summary.monthlyTotal ? ` • + ${price(summary.monthlyTotal)} ${t.perMonthShort}` : ''
                 }`}
           </span>
         </span>

@@ -1,10 +1,12 @@
 import type { Service } from '../lib/offer'
+import { useI18n } from '../i18n/I18nContext'
 import { useOffer } from '../state/OfferContext'
 import { CheckList, Expandable, Price, ServiceAction, Tag } from './ui'
 
 /** Karta wariantu w grupie wykluczających się opcji (branding, strona, outreach). */
 export function OptionCard({ service }: { service: Service }) {
   const { isSelected } = useOffer()
+  const { t } = useI18n()
   const selected = isSelected(service.id)
 
   return (
@@ -19,7 +21,7 @@ export function OptionCard({ service }: { service: Service }) {
       <div className="mb-4 flex min-h-7 flex-wrap items-center gap-2">
         {service.tag && <Tag tone={service.recommended ? 'navy' : 'gold'}>{service.tag}</Tag>}
         {selected && (
-          <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-gold-ink">Wybrany wariant</span>
+          <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-gold-ink">{t.selectedVariant}</span>
         )}
       </div>
 

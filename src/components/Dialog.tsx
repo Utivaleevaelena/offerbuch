@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { useI18n } from '../i18n/I18nContext'
 import { Icon } from './Icon'
 
 /**
@@ -19,6 +20,7 @@ export function Dialog({
   variant?: 'modal' | 'drawer'
 }) {
   const ref = useRef<HTMLDialogElement>(null)
+  const { t } = useI18n()
 
   useEffect(() => {
     const dialog = ref.current
@@ -58,7 +60,7 @@ export function Dialog({
           type="button"
           onClick={onClose}
           className="absolute top-4 right-4 z-10 grid size-11 place-items-center rounded-full border border-line bg-white text-navy-900 transition-colors hover:bg-ivory-deep"
-          aria-label="Zamknij"
+          aria-label={t.close}
         >
           <Icon name="close" size={18} />
         </button>

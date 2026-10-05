@@ -1,18 +1,19 @@
-import { PROPOSAL } from '../content/proposal'
-import { STAGES, servicesInStage, stageNumber } from '../lib/offer'
-import { formatPLN } from '../lib/summary'
+import { useI18n } from '../i18n/I18nContext'
+import { servicesInStage, stageNumber } from '../lib/offer'
 import { Icon } from './Icon'
 import { Emphasis } from './ui'
 
-function fromPrice(stageId: string): string {
-  const services = servicesInStage(stageId)
-  const min = Math.min(...services.map((s) => s.priceNet))
-  const monthly = services[0]?.billing === 'monthly'
-  return `${services.length > 1 ? 'od ' : ''}${formatPLN(min)}${monthly ? ' / mies.' : ''}`
-}
-
 export function Hero() {
-  const { hero, client, agency } = PROPOSAL
+  const { proposal, t, price } = useI18n()
+  const { hero, client, agency, stages } = proposal
+
+  const fromPrice = (stageId: string) => {
+    const services = servicesInStage(stageId)
+    const min = Math.min(...services.map((s) => s.priceNet))
+    const monthly = services[0]?.billing === 'monthly'
+    return `${services.length > 1 ? `${t.from} ` : ''}${price(min)}${monthly ? ` / ${t.perMonthShort.split(' / ')[1]}` : ''}`
+  }
+
   return (
     <section id="top" className="relative overflow-hidden" aria-labelledby="hero-title">
       <div aria-hidden="true" className="pointer-events-none absolute -top-40 right-[-10%] size-[36rem] rounded-full bg-gold-soft/70 blur-3xl" />
@@ -29,7 +30,7 @@ export function Hero() {
           <p className="mt-6 max-w-xl text-lg text-graphite sm:text-xl sm:leading-relaxed">{hero.subtitle}</p>
           <p className="mt-5 max-w-xl text-ink-muted">{hero.body}</p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a href={`#${STAGES[0]?.anchor ?? 'oferta'}`} className="btn-primary px-7">
+            <a href={`#${stages[0]?.anchor ?? 'oferta'}`} className="btn-primary px-7">
               {hero.primaryCta}
               <Icon name="arrowRight" size={18} />
             </a>
@@ -45,18 +46,18 @@ export function Hero() {
 
         {/* Okładka propozycji */}
         <aside
-          aria-label="Podsumowanie propozycji"
+          aria-label={t.proposalSummary}
           className="animate-fade-up relative rounded-[1.75rem] bg-navy-900 p-7 text-ivory shadow-lift sm:p-9"
         >
           <div aria-hidden="true" className="absolute inset-3 rounded-[1.25rem] border border-gold-light/20" />
           <div className="relative">
-            <p className="text-[0.68rem] font-semibold tracking-[0.26em] text-gold-light uppercase">Przygotowano dla</p>
+            <p className="text-[0.68rem] font-semibold tracking-[0.26em] text-gold-light uppercase">{t.preparedFor}</p>
             <p className="mt-2 font-serif text-2xl leading-tight">{client.fullName}</p>
-            <p className="mt-4 text-[0.68rem] font-semibold tracking-[0.26em] text-gold-light uppercase">Przygotował</p>
+            <p className="mt-4 text-[0.68rem] font-semibold tracking-[0.26em] text-gold-light uppercase">{t.preparedBy}</p>
             <p className="mt-1.5 text-sm font-semibold tracking-[0.12em]">{agency.name}</p>
 
             <ol className="mt-8 space-y-0 border-t border-white/10">
-              {STAGES.map((s) => (
+              {stages.map((s) => (
                 <li key={s.id}>
                   <a
                     href={`#${s.anchor}`}
@@ -71,7 +72,7 @@ export function Hero() {
                 </li>
               ))}
             </ol>
-            <p className="mt-5 text-xs text-ivory/60">Wszystkie ceny netto.</p>
+            <p className="mt-5 text-xs text-ivory/60">{t.allPricesNet}</p>
           </div>
         </aside>
       </div>

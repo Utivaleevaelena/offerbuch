@@ -1,10 +1,11 @@
-import { PROPOSAL } from '../content/proposal'
-import { STAGES, stageNumber } from '../lib/offer'
+import { useI18n } from '../i18n/I18nContext'
+import { stageNumber } from '../lib/offer'
 import { Icon } from './Icon'
 import { ProcessFlow } from './ui'
 
 export function Goal() {
-  const { goal, roadmap } = PROPOSAL
+  const { proposal, t } = useI18n()
+  const { goal, roadmap, stages: STAGES } = proposal
   const [first, ...rest] = goal.paragraphs
   return (
     <>
@@ -58,7 +59,7 @@ export function Goal() {
                 <span className="mt-4 font-serif text-[1.4rem] leading-tight text-navy-900">{s.label}</span>
                 <span className="mt-2 flex-1 text-sm text-ink-muted">{s.roadmapLine}</span>
                 <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-navy-900 group-hover:text-gold-ink">
-                  Zobacz etap
+                  {t.seeStage}
                   <Icon name="arrowRight" size={16} className="transition-transform group-hover:translate-x-0.5" />
                 </span>
               </a>

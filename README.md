@@ -41,6 +41,8 @@ i nigdy nie trafiają do kodu frontendu.
 ```
 src/content/proposal.ts      ← CAŁA treść oferty: teksty, etapy, usługi, ceny, emaile
 src/content/types.ts         ← typy treści (opis wszystkich pól i bloków)
+src/content/translations/    ← tłumaczenia EN / RU (tylko teksty, nakładane na wersję polską)
+src/i18n/ui.ts               ← teksty interfejsu i emaili w 3 językach, formatowanie cen
 src/theme.css                ← kolory marki
 src/lib/offer.ts             ← funkcje pomocnicze nad treścią
 src/lib/summary.ts           ← sumy, formatowanie PLN, walidacja wyboru (wspólne dla UI i serwera)
@@ -52,6 +54,12 @@ api/send-offer.ts            ← Vercel Function: POST /api/send-offer
 
 **Szablon:** nowa oferta = kopia repozytorium + edycja `src/content/proposal.ts`
 (i opcjonalnie `src/theme.css`). Instrukcja krok po kroku: [TEMPLATE.md](TEMPLATE.md).
+
+## Języki
+
+Polski jest wersją główną; przełącznik PL / EN / RU w nagłówku, link z `?lang=en|ru` otwiera stronę
+w danym języku. Potwierdzenie dla klienta wysyłane jest w wybranym języku, email do administratora —
+zawsze po polsku (z informacją o języku klienta).
 
 ## Logika biznesowa
 
