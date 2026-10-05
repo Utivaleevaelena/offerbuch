@@ -15,31 +15,17 @@ const services: Service[] = [
     category: 'strategy',
     title: 'Audyt + strategia + pozycjonowanie',
     summaryTitle: 'Audyt + strategia',
-    priceNet: 1200,
-    billing: 'one_time',
+    // Cena zależy od wybranego czasu: godziny × stawka. priceNet = pełny zakres (16 h).
+    priceNet: 1280,
+    billing: 'hourly',
+    hourlyRateNet: 80,
     exclusiveGroup: null,
     tag: 'Fundament projektu',
     recommended: true,
     description:
       'Strategia pozwoli nam zbudować wszystkie kolejne elementy projektu wokół jednego, spójnego kierunku biznesowego.',
-    includes: [
-      'analiza obecnej strony internetowej',
-      'analiza social media',
-      'analiza Google Business Profile',
-      'analiza obecnego wizerunku',
-      'analiza wybranych konkurentów',
-      'określenie grupy docelowej',
-      'profil idealnego klienta',
-      'identyfikacja potrzeb i problemów klienta',
-      'pozycjonowanie marki',
-      'USP',
-      'główny komunikat sprzedażowy',
-      'koncepcja produktu wejściowego / lead magnetu',
-      'rekomendowana struktura nowej strony',
-      'podstawowa koncepcja lejka sprzedażowego',
-      'plan kolejnych działań',
-    ],
-    cta: 'Dodaj strategię do oferty',
+    includes: [],
+    cta: 'Dodaj wybrany zakres do oferty',
   },
 
   // ───────────────────────── ETAP 2 ─────────────────────────
@@ -293,20 +279,164 @@ const stages: Stage[] = [
     anchor: 'strategia',
     navLabel: 'Strategia',
     label: 'Audyt + strategia + pozycjonowanie',
-    roadmapLine: 'Ustalamy, co, komu i dlaczego chcemy sprzedawać.',
-    eyebrow: 'Audyt + strategia + pozycjonowanie',
-    title: 'Najpierw ustalamy, co, komu i dlaczego chcemy sprzedawać.',
-    cardBlocks: [
-      {
-        type: 'highlight',
-        eyebrow: 'Kierunek komunikacji',
-        icon: 'compass',
-        quote: '„Zanim zmienisz księgowość, sprawdź, czy naprawdę warto.”',
-        text: 'Zamiast namawiać firmę od razu do zmiany biura rachunkowego, rozpoczynamy relację od diagnozy obecnego modelu księgowości.',
-        flowLabel: 'Obszary diagnozy',
-        flow: ['Procesy', 'Raportowanie', 'Ryzyka', 'Koszty', 'Usprawnienia'],
-      },
+    roadmapLine: 'Zakres pracy dopasowany do potrzeb — od szybkiego audytu po pełną strategię.',
+    eyebrow: 'Etap 1',
+    title: 'Audyt + strategia + pozycjonowanie',
+    intro: [
+      'Wybierz zakres pracy strategicznej dopasowany do aktualnych potrzeb kancelarii.',
+      'Każdy projekt może wymagać innego poziomu analizy. Możecie wybrać gotowy zakres lub samodzielnie zaznaczyć elementy, na których mamy się skupić.',
     ],
+    configurator: {
+      serviceId: 'strategy',
+      maxHours: 16,
+      step: 0.5,
+      defaultHours: 16,
+      marks: [4, 8, 12, 16],
+      extraLabel: 'Czas na dodatkową analizę, konsultację lub dopracowanie rekomendacji.',
+      // Kolejność = priorytet, w jakim suwak dobiera elementy.
+      tasks: [
+        {
+          id: 'strategy-situation',
+          title: 'Analiza obecnej sytuacji i materiałów',
+          hours: 1,
+          description:
+            'Analiza materiałów z rozmowy, obecnej sytuacji firmy, celów biznesowych oraz najważniejszych priorytetów projektu.',
+        },
+        {
+          id: 'strategy-audit',
+          title: 'Audyt strony i komunikacji',
+          hours: 2,
+          description:
+            'Analiza obecnej strony internetowej, social media, Google Business Profile oraz spójności komunikacji i wizerunku.',
+        },
+        {
+          id: 'strategy-competition',
+          title: 'Analiza konkurencji',
+          hours: 2,
+          description:
+            'Analiza 4–6 istotnych konkurentów: oferta, pozycjonowanie, komunikacja, CTA, strony internetowe, mocne i słabe strony.',
+        },
+        {
+          id: 'strategy-icp',
+          title: 'Profil idealnego klienta',
+          hours: 1.5,
+          description:
+            'Określenie typu firmy, wielkości biznesu, osób decyzyjnych, potrzeb, problemów i powodów, dla których klient może rozważyć zmianę obecnego modelu księgowości.',
+        },
+        {
+          id: 'strategy-positioning',
+          title: 'Pozycjonowanie i USP',
+          hours: 2,
+          description:
+            'Określenie, czym Gawin & Wojnowska powinny wyróżniać się na tle klasycznych biur rachunkowych i jaką wartość komunikować większym spółkom i ich zarządom.',
+        },
+        {
+          id: 'strategy-offer',
+          title: 'Główny offer sprzedażowy',
+          hours: 1.5,
+          description: 'Opracowanie głównego komunikatu sprzedażowego oraz koncepcji produktu wejściowego / lead magnetu.',
+          example: '„Zanim zmienisz księgowość, sprawdź, czy naprawdę warto.”',
+        },
+        {
+          id: 'strategy-website',
+          title: 'Koncepcja nowej strony',
+          hours: 2,
+          description:
+            'Rekomendacja struktury strony, najważniejszych sekcji, hero, CTA, hierarchii informacji oraz sposobu komunikowania usług.',
+        },
+        {
+          id: 'strategy-funnel',
+          title: 'Koncepcja lejka B2B',
+          hours: 1.5,
+          description:
+            'Określenie, jak połączyć stronę, ofertę, diagnozę, B2B outreach, social media i kontakt sprzedażowy w jeden logiczny proces.',
+        },
+        {
+          id: 'strategy-roadmap',
+          title: 'Roadmap i dokument końcowy',
+          hours: 1.5,
+          description: 'Podsumowanie rekomendacji, kolejność działań i zebranie całej strategii w spójny dokument.',
+        },
+        {
+          id: 'strategy-consultation',
+          title: 'Konsultacja i korekta',
+          hours: 1,
+          description: 'Jedna konsultacja po prezentacji strategii oraz jeden etap doprecyzowania / korekty rekomendacji.',
+        },
+      ],
+      presets: [
+        {
+          id: 'quick-audit',
+          title: 'Szybki audyt',
+          hours: 4,
+          description: 'Dla firm, które chcą szybko zobaczyć najważniejsze problemy, błędy i priorytety.',
+          taskIds: ['strategy-situation', 'strategy-audit'],
+          remainderLabel: 'Dodatkowa analiza / rekomendacje',
+        },
+        {
+          id: 'audit-direction',
+          title: 'Audyt + kierunek strategiczny',
+          hours: 8,
+          description: 'Audyt obecnej sytuacji plus pierwsze strategiczne rekomendacje dotyczące rynku i klienta.',
+          taskIds: ['strategy-situation', 'strategy-audit', 'strategy-competition', 'strategy-icp'],
+          remainderLabel: 'Dodatkowe rekomendacje strategiczne',
+        },
+        {
+          id: 'brand-offer',
+          title: 'Strategia marki i oferty',
+          hours: 12,
+          description: 'Pełne określenie klienta, pozycjonowania, USP i głównego offeru sprzedażowego.',
+          taskIds: [
+            'strategy-situation',
+            'strategy-audit',
+            'strategy-competition',
+            'strategy-icp',
+            'strategy-positioning',
+            'strategy-offer',
+          ],
+          remainderLabel: 'Czas na dopracowanie rekomendacji',
+        },
+        {
+          id: 'full-strategy',
+          title: 'Pełna strategia marketingowa',
+          hours: 16,
+          badge: 'Rekomendowane',
+          description:
+            'Pełny zakres: audyt, konkurencja, klient, pozycjonowanie, oferta, koncepcja strony, lejek B2B, roadmap i konsultacja.',
+          taskIds: [
+            'strategy-situation',
+            'strategy-audit',
+            'strategy-competition',
+            'strategy-icp',
+            'strategy-positioning',
+            'strategy-offer',
+            'strategy-website',
+            'strategy-funnel',
+            'strategy-roadmap',
+            'strategy-consultation',
+          ],
+        },
+      ],
+      rules: [
+        {
+          when: 'strategy-positioning',
+          requires: ['strategy-icp'],
+          message:
+            'Rekomendujemy również „Profil idealnego klienta”, ponieważ stanowi podstawę skutecznego pozycjonowania.',
+        },
+        {
+          when: 'strategy-funnel',
+          requires: ['strategy-icp', 'strategy-offer'],
+          message: 'Dla skutecznego lejka rekomendujemy wcześniej określić idealnego klienta i główny offer sprzedażowy.',
+        },
+        {
+          when: 'strategy-website',
+          requires: ['strategy-positioning', 'strategy-offer'],
+          message:
+            'Strona będzie skuteczniejsza, jeśli wcześniej określimy pozycjonowanie i główny komunikat sprzedażowy.',
+        },
+      ],
+    },
   },
   {
     id: 'branding',

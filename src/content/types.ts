@@ -11,7 +11,8 @@ export type IconName =
   | 'database' | 'sparkle' | 'globe' | 'flame' | 'shield' | 'pen' | 'layers' | 'rocket' | 'inbox'
   | 'compass' | 'camera' | 'monitor' | 'mail' | 'palette' | 'info' | 'target' | 'users' | 'document'
 
-export type Billing = 'one_time' | 'monthly'
+/** one_time — jednorazowo, monthly — co miesiąc, hourly — wg wybranego czasu pracy (jednorazowo). */
+export type Billing = 'one_time' | 'monthly' | 'hourly'
 
 export interface Service {
   /** Wewnętrzny identyfikator (trafia również do emaila). Unikalny w całej ofercie. */
@@ -26,8 +27,11 @@ export interface Service {
   cardTitle?: string
   /** Nazwa wariantu (dla usług w grupie wykluczającej się). */
   variant?: string
+  /** Cena netto. Dla `hourly` — cena pełnego zakresu (wartość referencyjna). */
   priceNet: number
   billing: Billing
+  /** Stawka godzinowa netto (tylko dla `billing: 'hourly'`). */
+  hourlyRateNet?: number
   /** Usługi z tą samą grupą wykluczają się nawzajem (można wybrać tylko jedną). */
   exclusiveGroup: string | null
   tag?: string
@@ -43,6 +47,73 @@ export interface Service {
   extraList?: { label: string; items: string[] }
   /** Tekst przycisku dodania. */
   cta: string
+  /** Wybrany zakres (tylko w podsumowaniu, dla usług `hourly`) — nie wpisuj w treści oferty. */
+  scope?: ResolvedScope
+}
+
+/** Element pracy w konfiguratorze zakresu (np. „Analiza konkurencji”). */
+export interface ScopeTask {
+  id: string
+  title: string
+  /** Szacowany czas w godzinach (wielokrotność 0,5). */
+  hours: number
+  description: string
+  /** Krótka inspiracja pod opisem (np. przykładowy komunikat). */
+  example?: string
+}
+
+/** Gotowy zakres — skrót, który ustawia czas i elementy (nie osobny produkt). */
+export interface ScopePreset {
+  id: string
+  title: string
+  hours: number
+  description: string
+  /** Elementy wchodzące w zakres. */
+  taskIds: string[]
+  /** Opis pozostałego czasu w tym zakresie. */
+  remainderLabel?: string
+  badge?: string
+}
+
+/** Rekomendacja zależności: gdy wybrano `when`, a brakuje któregoś z `requires`. */
+export interface ScopeRule {
+  when: string
+  requires: string[]
+  message: string
+}
+
+/** Konfigurator zakresu pracy dla usługi rozliczanej godzinowo. */
+export interface ScopeConfigurator {
+  /** Id usługi `hourly`, której dotyczy konfigurator. */
+  serviceId: string
+  maxHours: number
+  step: number
+  defaultHours: number
+  /** Znaczniki na suwaku, np. [4, 8, 12, 16]. */
+  marks: number[]
+  /** Elementy pracy w kolejności priorytetu (suwak wybiera je po kolei). */
+  tasks: ScopeTask[]
+  presets: ScopePreset[]
+  rules: ScopeRule[]
+  /** Opis czasu, który nie mieści się w kolejnym pełnym elemencie. */
+  extraLabel: string
+}
+
+/** Zakres zapisany w ofercie: czas + wybrane elementy. */
+export interface ScopeSelection {
+  hours: number
+  taskIds: string[]
+}
+
+/** Zakres po walidacji — z policzonym czasem dodatkowym. */
+export interface ResolvedScope {
+  hours: number
+  rateNet: number
+  tasks: ScopeTask[]
+  /** Czas niewykorzystany przez pełne elementy. */
+  extraHours: number
+  /** Opis czasu dodatkowego (z gotowego zakresu lub ogólny). */
+  extraLabel: string
 }
 
 /** Bloki treści, z których składa się etap. */
@@ -96,6 +167,8 @@ export interface Stage {
   cardBlocks?: Block[]
   /** Bloki wewnątrz karty, pod listą „Co obejmuje?” (tylko gdy etap ma jedną usługę). */
   cardAfter?: Block[]
+  /** Interaktywny konfigurator zakresu (zastępuje kartę usługi godzinowej). */
+  configurator?: ScopeConfigurator
   /** Ustawienia dla etapu z wariantami (kilka usług). */
   options?: {
     eyebrow?: string

@@ -32,7 +32,7 @@ function validate(form: FormState, t: UiStrings): Errors {
 }
 
 export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { selected, summary } = useOffer()
+  const { selected, summary, scopes } = useOffer()
   const { lang, proposal, t } = useI18n()
   const [form, setForm] = useState<FormState>(EMPTY)
   const [errors, setErrors] = useState<Errors>({})
@@ -81,6 +81,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
           },
           consent: form.consent,
           selectedIds: selected,
+          scopes,
           lang,
           website: form.website,
         }),
@@ -89,7 +90,7 @@ export function SendOfferDialog({ open, onClose }: { open: boolean; onClose: () 
       if (!res.ok || !data?.ok) {
         throw new Error(data?.error || t.errSend)
       }
-      setSent(summarize(selected, proposal))
+      setSent(summarize(selected, proposal, scopes))
       setStatus('idle')
     } catch (err) {
       // Wybór usług pozostaje nienaruszony — można spróbować ponownie.

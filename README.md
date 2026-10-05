@@ -65,6 +65,10 @@ zawsze po polsku (z informacją o języku klienta).
 
 - Grupy wykluczające się (`exclusiveGroup`): **branding** (Mini / PRO), **website** (Landing page kampanijny / Strona PRO),
   **outreach** (MICRO / STANDARD / GROWTH) — wybór wariantu automatycznie zastępuje poprzedni.
+- **Strategia** (`billing: 'hourly'`, 80 zł netto / godz.) ma konfigurator zakresu (`stage.configurator`):
+  suwak 0–16 h (krok 0,5 h) i lista elementów sterują sobą nawzajem — suwak dobiera pełne elementy
+  w kolejności priorytetu (reszta = „czas dodatkowy”), a zaznaczenie elementów ustawia suwak na sumę ich czasu.
+  Gotowe zakresy (4 / 8 / 12 / 16 h) to skróty, nie osobne produkty. Cena = godziny × stawka (przelicza też serwer).
 - Usługi jednorazowe i miesięczne (`billing`) są sumowane osobno; przy braku pakietu miesięcznego
   wyświetlana jest tylko „Suma netto”.
 - „Rekomendowany zestaw” dodaje: strategię, Brand Guide PRO, sesję i Stronę PRO (bez B2B Outreach).

@@ -15,7 +15,8 @@
 import { getProposal } from '../src/content/localize.js'
 import type { Proposal } from '../src/content/types.js'
 import { DEFAULT_LANG, LANG_NAMES, UI, formatPrice, isLang, type Lang } from '../src/i18n/ui.js'
-import { sanitizeSelection, stageLabel, summarize, type OfferSummary } from '../src/lib/summary.js'
+import { formatHours } from '../src/lib/scope.js'
+import { sanitizeScopes, sanitizeSelection, stageLabel, summarize, type OfferSummary, type Scopes } from '../src/lib/summary.js'
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails'
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -31,6 +32,7 @@ interface Contact {
 interface ParsedPayload {
   contact: Contact
   selectedIds: string[]
+  scopes: Scopes
 }
 
 class ValidationError extends Error {}
@@ -65,7 +67,7 @@ function parsePayload(data: Record<string, unknown>, lang: Lang): ParsedPayload 
   const selectedIds = sanitizeSelection(data.selectedIds)
   if (selectedIds.length === 0) throw new ValidationError(t.server.noServices)
 
-  return { contact, selectedIds }
+  return { contact, selectedIds, scopes: sanitizeScopes(data.scopes) }
 }
 
 function escapeHtml(value: string): string {
@@ -95,7 +97,15 @@ function scopeText(summary: OfferSummary, lang: Lang): string {
   const price = (v: number) => plain(formatPrice(v, lang))
   const lines: string[] = []
   if (summary.oneTimeItems.length) {
-    for (const s of summary.oneTimeItems) lines.push(`${s.summaryTitle} — ${price(s.priceNet)} ${t.net}`)
+    for (const s of summary.oneTimeItems) {
+      lines.push(`${s.summaryTitle} — ${price(s.priceNet)} ${t.net}`)
+      if (s.scope) {
+        lines.push(`   ${plain(t.scope.hoursTimesRate(formatHours(s.scope.hours, lang), formatPrice(s.scope.rateNet, lang)))}`)
+        for (const task of s.scope.tasks) lines.push(`   • ${task.title} (${t.scope.hours(formatHours(task.hours, lang))})`)
+        if (s.scope.extraHours > 0)
+          lines.push(`   • ${t.scope.extraTime}: ${t.scope.hours(formatHours(s.scope.extraHours, lang))} — ${s.scope.extraLabel}`)
+      }
+    }
     lines.push('', `${t.email.oneTimeSum.toUpperCase()}:`, `${price(summary.oneTimeTotal)} ${t.net}`)
   }
   if (summary.monthlyItems.length) {
@@ -157,11 +167,11 @@ const C = {
 function scopeHtml(summary: OfferSummary, p: Proposal, lang: Lang): string {
   const t = UI[lang]
   const price = (v: number) => formatPrice(v, lang)
-  const row = (label: string, sub: string, value: string) => `
+  const row = (label: string, sub: string, value: string, details = '') => `
     <tr>
       <td style="padding:12px 0;border-bottom:1px solid ${C.line};">
         <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:${C.gold};">${escapeHtml(sub)}</div>
-        <div style="font-size:15px;color:${C.ink};font-weight:600;">${escapeHtml(label)}</div>
+        <div style="font-size:15px;color:${C.ink};font-weight:600;">${escapeHtml(label)}</div>${details}
       </td>
       <td style="padding:12px 0;border-bottom:1px solid ${C.line};text-align:right;white-space:nowrap;font-size:15px;color:${C.ink};">${escapeHtml(value)}</td>
     </tr>`
@@ -169,7 +179,7 @@ function scopeHtml(summary: OfferSummary, p: Proposal, lang: Lang): string {
   let html = ''
   if (summary.oneTimeItems.length) {
     html += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${summary.oneTimeItems
-      .map((s) => row(s.summaryTitle, stageLabel(s, p, lang), `${price(s.priceNet)} ${t.net}`))
+      .map((s) => row(s.summaryTitle, stageLabel(s, p, lang), `${price(s.priceNet)} ${t.net}`, scopeDetails(s, lang)))
       .join('')}
       <tr>
         <td style="padding:16px 0 4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:${C.muted};">${escapeHtml(t.email.oneTimeSum)}</td>
@@ -190,6 +200,20 @@ function scopeHtml(summary: OfferSummary, p: Proposal, lang: Lang): string {
   }
   html += `<p style="margin:16px 0 0;font-size:12px;color:${C.muted};">${escapeHtml(t.pricesAreNet)}</p>`
   return html
+}
+
+/** Szczegóły zakresu usługi godzinowej w emailu HTML. */
+function scopeDetails(s: OfferSummary['items'][number], lang: Lang): string {
+  if (!s.scope) return ''
+  const t = UI[lang]
+  const h = (v: number) => t.scope.hours(formatHours(v, lang))
+  const items = s.scope.tasks.map((task) => `<li>${escapeHtml(task.title)} (${h(task.hours)})</li>`)
+  if (s.scope.extraHours > 0)
+    items.push(`<li>${escapeHtml(t.scope.extraTime)}: ${h(s.scope.extraHours)} — ${escapeHtml(s.scope.extraLabel)}</li>`)
+  return `<div style="font-size:13px;color:${C.muted};margin-top:2px;">${escapeHtml(
+    t.scope.hoursTimesRate(formatHours(s.scope.hours, lang), formatPrice(s.scope.rateNet, lang)),
+  )}</div>
+        <ul style="margin:6px 0 0;padding-left:18px;font-size:13px;color:${C.muted};line-height:1.5;">${items.join('')}</ul>`
 }
 
 function layout(title: string, body: string, p: Proposal, lang: Lang): string {
@@ -307,18 +331,18 @@ export async function handleSendOffer(request: Request): Promise<Response> {
     throw err
   }
 
-  const { contact, selectedIds } = payload
+  const { contact, selectedIds, scopes } = payload
   const clientProposal = getProposal(lang)
   const sentAt = new Date()
 
   const admin: EmailMessage = {
     to: process.env.ADMIN_EMAIL ?? '',
     subject: getProposal(DEFAULT_LANG).emails.adminSubject,
-    text: adminText(contact, summarize(selectedIds), selectedIds, sentAt, lang),
-    html: adminHtml(contact, summarize(selectedIds), selectedIds, sentAt, lang),
+    text: adminText(contact, summarize(selectedIds, undefined, scopes), selectedIds, sentAt, lang),
+    html: adminHtml(contact, summarize(selectedIds, undefined, scopes), selectedIds, sentAt, lang),
     replyTo: contact.email,
   }
-  const clientSummary = summarize(selectedIds, clientProposal)
+  const clientSummary = summarize(selectedIds, clientProposal, scopes)
   const client: EmailMessage = {
     to: contact.email,
     subject: clientProposal.emails.clientSubject,

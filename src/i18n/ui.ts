@@ -114,6 +114,37 @@ export interface UiStrings {
   sentScope: string
   backToOffer: string
 
+  // konfigurator zakresu (strategia)
+  scope: {
+    hours: (h: string) => string
+    perHour: string
+    rate: (price: string) => string
+    presetsTitle: string
+    presetsHint: string
+    sliderTitle: string
+    sliderHint: string
+    selectedTime: string
+    estimatedCost: string
+    tasksTitle: string
+    tasksHint: string
+    summaryTitle: string
+    areas: string
+    workTime: string
+    cost: string
+    extraTime: string
+    remaining: string
+    add: string
+    update: string
+    added: string
+    empty: string
+    inspiration: string
+    edit: string
+    details: string
+    hoursTimesRate: (hours: string, rate: string) => string
+    toastAdded: string
+    toastUpdated: string
+  }
+
   // emaile i serwer
   email: {
     greeting: (name: string) => string
@@ -210,6 +241,36 @@ const pl: UiStrings = {
   sentScope: 'Przesłany zakres',
   backToOffer: 'Wróć do oferty',
 
+  scope: {
+    hours: (h) => `${h} h`,
+    perHour: 'godz.',
+    rate: (price) => `${price} netto / godz.`,
+    presetsTitle: 'Rekomendowany zakres',
+    presetsHint: 'Gotowe zakresy ustawiają czas i elementy strategii — każdy możecie dowolnie zmienić.',
+    sliderTitle: 'Czas strategiczny',
+    sliderHint: 'Więcej czasu to szerszy zakres pracy i więcej elementów strategii.',
+    selectedTime: 'Wybrany czas',
+    estimatedCost: 'Szacowany koszt',
+    tasksTitle: 'Co przygotujemy?',
+    tasksHint: 'Zaznaczcie elementy, na których mamy się skupić — szacowany czas pracy i koszt przeliczą się automatycznie.',
+    summaryTitle: 'Twój zakres strategiczny',
+    areas: 'Wybrane obszary',
+    workTime: 'Czas pracy',
+    cost: 'Koszt',
+    extraTime: 'Dodatkowy czas',
+    remaining: 'Pozostały czas',
+    add: 'Dodaj wybrany zakres do oferty',
+    update: 'Zaktualizuj zakres w ofercie',
+    added: 'Zakres jest w Twojej ofercie',
+    empty: 'Ustawcie czas na suwaku lub zaznaczcie elementy strategii.',
+    inspiration: 'Przykładowy kierunek:',
+    edit: 'Edytuj zakres',
+    details: 'Zakres pracy',
+    hoursTimesRate: (h, r) => `${h} h × ${r}`,
+    toastAdded: 'Dodano zakres strategii do oferty',
+    toastUpdated: 'Zaktualizowano zakres strategii',
+  },
+
   email: {
     greeting: (name) => `Dzień dobry ${name},`,
     scope: 'Wybrany zakres',
@@ -305,6 +366,36 @@ const en: UiStrings = {
   sentScope: 'Submitted scope',
   backToOffer: 'Back to offer',
 
+  scope: {
+    hours: (h) => `${h} h`,
+    perHour: 'h',
+    rate: (price) => `${price} net / hour`,
+    presetsTitle: 'Recommended scope',
+    presetsHint: 'Ready-made scopes set the time and strategy elements — you can adjust any of them.',
+    sliderTitle: 'Strategic time',
+    sliderHint: 'More time means a broader scope of work and more strategy elements.',
+    selectedTime: 'Selected time',
+    estimatedCost: 'Estimated cost',
+    tasksTitle: 'What will we prepare?',
+    tasksHint: 'Select the elements we should focus on — the estimated working time and cost update automatically.',
+    summaryTitle: 'Your strategic scope',
+    areas: 'Selected areas',
+    workTime: 'Working time',
+    cost: 'Cost',
+    extraTime: 'Additional time',
+    remaining: 'Remaining time',
+    add: 'Add the selected scope to the offer',
+    update: 'Update the scope in your offer',
+    added: 'This scope is in your offer',
+    empty: 'Set the time with the slider or select strategy elements.',
+    inspiration: 'Example direction:',
+    edit: 'Edit scope',
+    details: 'Scope of work',
+    hoursTimesRate: (h, r) => `${h} h × ${r}`,
+    toastAdded: 'Strategy scope added to offer',
+    toastUpdated: 'Strategy scope updated',
+  },
+
   email: {
     greeting: (name) => `Hello ${name},`,
     scope: 'Selected scope',
@@ -399,6 +490,36 @@ const ru: UiStrings = {
   willContact: 'Мы свяжемся с вами, чтобы обсудить детали и спланировать следующие шаги.',
   sentScope: 'Отправленный объём',
   backToOffer: 'Вернуться к оферте',
+
+  scope: {
+    hours: (h) => `${h} ч`,
+    perHour: 'ч',
+    rate: (price) => `${price} нетто / час`,
+    presetsTitle: 'Рекомендуемый объём',
+    presetsHint: 'Готовые варианты задают время и элементы стратегии — любой из них можно изменить.',
+    sliderTitle: 'Стратегическое время',
+    sliderHint: 'Больше времени — шире объём работ и больше элементов стратегии.',
+    selectedTime: 'Выбранное время',
+    estimatedCost: 'Ориентировочная стоимость',
+    tasksTitle: 'Что мы подготовим?',
+    tasksHint: 'Отметьте элементы, на которых нам стоит сосредоточиться, — время работы и стоимость пересчитаются автоматически.',
+    summaryTitle: 'Ваш стратегический объём',
+    areas: 'Выбранные области',
+    workTime: 'Время работы',
+    cost: 'Стоимость',
+    extraTime: 'Дополнительное время',
+    remaining: 'Оставшееся время',
+    add: 'Добавить выбранный объём в оферту',
+    update: 'Обновить объём в оферте',
+    added: 'Этот объём уже в вашей оферте',
+    empty: 'Задайте время ползунком или отметьте элементы стратегии.',
+    inspiration: 'Пример направления:',
+    edit: 'Изменить объём',
+    details: 'Объём работ',
+    hoursTimesRate: (h, r) => `${h} ч × ${r}`,
+    toastAdded: 'Объём стратегии добавлен в оферту',
+    toastUpdated: 'Объём стратегии обновлён',
+  },
 
   email: {
     greeting: (name) => `Здравствуйте, ${name}!`,

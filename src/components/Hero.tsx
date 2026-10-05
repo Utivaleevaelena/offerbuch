@@ -9,6 +9,8 @@ export function Hero() {
 
   const fromPrice = (stageId: string) => {
     const services = servicesInStage(stageId)
+    const hourly = services.find((s) => s.billing === 'hourly')
+    if (hourly) return `${price(hourly.hourlyRateNet ?? 0)} / ${t.scope.perHour}`
     const min = Math.min(...services.map((s) => s.priceNet))
     const monthly = services[0]?.billing === 'monthly'
     return `${services.length > 1 ? `${t.from} ` : ''}${price(min)}${monthly ? ` / ${t.perMonthShort.split(' / ')[1]}` : ''}`

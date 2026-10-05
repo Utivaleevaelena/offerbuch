@@ -1,14 +1,16 @@
 import { useI18n } from '../i18n/I18nContext'
 import { getService } from '../lib/offer'
+import { withScope } from '../lib/scope'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
 
 export function RecommendedSet() {
-  const { addRecommendedSet, isSelected } = useOffer()
+  const { addRecommendedSet, isSelected, scopes } = useOffer()
   const { proposal, t, price } = useI18n()
   const rec = proposal.recommended
   if (!rec) return null
-  const items = rec.serviceIds.map((id) => getService(id, proposal)!)
+  // Usługi godzinowe: cena według zakresu w ofercie (lub pełnego zakresu, jeśli jeszcze nie wybrano).
+  const items = rec.serviceIds.map((id) => withScope(getService(id, proposal)!, scopes[id], proposal))
   const total = items.reduce((sum, s) => sum + s.priceNet, 0)
   const allSelected = items.every((s) => isSelected(s.id))
 

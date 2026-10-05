@@ -3,6 +3,7 @@ import { priceRange, servicesInStage, stageNumber, type Service, type Stage } fr
 import { Blocks } from './Blocks'
 import { Icon } from './Icon'
 import { OptionCard } from './OptionCard'
+import { ScopeConfigurator } from './ScopeConfigurator'
 import { CheckList, Emphasis, Expandable, Price, ServiceAction, StageHeader, Tag } from './ui'
 
 /** Jeden etap oferty — w całości budowany z danych w src/content/proposal.ts. */
@@ -13,9 +14,15 @@ export function StageSection({ stage }: { stage: Stage }) {
   const single = services.length === 1
   const options = stage.options
   const range = priceRange(stage.id)
+  const cfg = stage.configurator
+  const hourlyService = cfg && services.find((s) => s.id === cfg.serviceId)
 
-  const aside =
-    !single && (options?.showPriceRange || (options?.hint && !options.title)) ? (
+  const aside = hourlyService ? (
+    <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-3.5 py-1.5 text-xs font-medium text-ink-muted">
+      <Icon name="compass" size={14} className="text-gold" />
+      {t.scope.rate(price(hourlyService.hourlyRateNet ?? 0))}
+    </span>
+  ) : !single && (options?.showPriceRange || (options?.hint && !options.title)) ? (
       <div className="flex flex-wrap items-center gap-3">
         {options?.showPriceRange && (
           <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm">
@@ -49,7 +56,9 @@ export function StageSection({ stage }: { stage: Stage }) {
 
       {stage.blocks && <Blocks blocks={stage.blocks} />}
 
-      {single ? (
+      {cfg && hourlyService ? (
+        <ScopeConfigurator cfg={cfg} service={hourlyService} />
+      ) : single ? (
         <SingleServiceCard service={services[0]} stage={stage} />
       ) : (
         <>

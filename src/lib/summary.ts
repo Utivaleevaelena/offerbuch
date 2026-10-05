@@ -1,7 +1,23 @@
 import { PROPOSAL } from '../content/proposal.js'
-import type { Proposal, Service } from '../content/types.js'
+import type { Proposal, ScopeSelection, Service } from '../content/types.js'
 import { DEFAULT_LANG, UI, type Lang } from '../i18n/ui.js'
 import { SERVICES, getService, getStage, stageNumber } from './offer.js'
+import { getConfigurator, sanitizeScope, withScope } from './scope.js'
+
+/** Wybrane zakresy usług godzinowych: id usługi → czas + elementy. */
+export type Scopes = Record<string, ScopeSelection>
+
+/** Walidacja zakresów (z localStorage lub z żądania do serwera). */
+export function sanitizeScopes(raw: unknown): Scopes {
+  const result: Scopes = {}
+  if (!raw || typeof raw !== 'object') return result
+  for (const [serviceId, value] of Object.entries(raw as Record<string, unknown>)) {
+    const cfg = getConfigurator(serviceId)
+    const sel = cfg && sanitizeScope(cfg, value)
+    if (sel) result[serviceId] = sel
+  }
+  return result
+}
 
 /** Usuwa nieznane identyfikatory i duplikaty, wymusza wykluczanie się wariantów. */
 export function sanitizeSelection(ids: unknown): string[] {
@@ -36,9 +52,10 @@ export interface OfferSummary {
 }
 
 /** Podsumowanie wyboru; usługi w języku przekazanej oferty. */
-export function summarize(ids: string[], p: Proposal = PROPOSAL): OfferSummary {
-  const items = sanitizeSelection(ids).map((id) => getService(id, p)!)
-  const oneTimeItems = items.filter((s) => s.billing === 'one_time')
+export function summarize(ids: string[], p: Proposal = PROPOSAL, scopes: Scopes = {}): OfferSummary {
+  const items = sanitizeSelection(ids).map((id) => withScope(getService(id, p)!, scopes[id], p))
+  // Usługi godzinowe są płatne jednorazowo — liczą się do sumy usług jednorazowych.
+  const oneTimeItems = items.filter((s) => s.billing !== 'monthly')
   const monthlyItems = items.filter((s) => s.billing === 'monthly')
   return {
     items,

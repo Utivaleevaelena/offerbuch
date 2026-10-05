@@ -1,5 +1,6 @@
 import { getStage, stageNumber } from '../lib/offer'
 import { useI18n } from '../i18n/I18nContext'
+import { formatHours } from '../lib/scope'
 import type { OfferSummary as Summary } from '../lib/summary'
 import { useOffer } from '../state/OfferContext'
 import { Icon } from './Icon'
@@ -15,7 +16,8 @@ export function SummaryLines({
   /** Gdy podane — pokazuje link „Zmień wariant” przy usługach z wariantami. */
   onNavigate?: () => void
 }) {
-  const { proposal, t, price } = useI18n()
+  const { proposal, t, price, lang } = useI18n()
+  const hours = (h: number) => formatHours(h, lang)
   return (
     <ul className="divide-y divide-line">
       {summary.items.map((s) => {
@@ -44,12 +46,57 @@ export function SummaryLines({
                   )}
                 </p>
               )}
+              {s.scope && (
+                <>
+                  <p className="text-sm text-ink-muted">
+                    {t.scope.hoursTimesRate(hours(s.scope.hours), price(s.scope.rateNet))}
+                  </p>
+                  <details className="group mt-1.5">
+                    <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-semibold text-navy-900 [&::-webkit-details-marker]:hidden">
+                      {t.scope.details} ({s.scope.tasks.length})
+                      <Icon name="chevronDown" size={14} className="transition-transform group-open:rotate-180" />
+                    </summary>
+                    <ul className="mt-2 space-y-1 text-xs text-ink-muted">
+                      {s.scope.tasks.map((task) => (
+                        <li key={task.id} className="flex gap-1.5">
+                          <Icon name="check" size={13} className="mt-0.5 shrink-0 text-gold" />
+                          {task.title}
+                        </li>
+                      ))}
+                      {s.scope.extraHours > 0 && (
+                        <li className="flex gap-1.5">
+                          <Icon name="sparkle" size={13} className="mt-0.5 shrink-0 text-gold" />
+                          {t.scope.extraTime}: {t.scope.hours(hours(s.scope.extraHours))}
+                        </li>
+                      )}
+                    </ul>
+                  </details>
+                  {(onNavigate || onRemove) && (
+                    <p className="mt-1.5 flex flex-wrap gap-x-3 text-xs font-semibold">
+                      {onNavigate && (
+                        <a href={`#${stage.anchor}`} onClick={onNavigate} className="text-gold-ink underline-offset-4 hover:underline">
+                          {t.scope.edit}
+                        </a>
+                      )}
+                      {onRemove && (
+                        <button
+                          type="button"
+                          onClick={() => onRemove(s.id)}
+                          className="text-ink-muted underline-offset-4 hover:text-navy-900 hover:underline"
+                        >
+                          {t.remove}
+                        </button>
+                      )}
+                    </p>
+                  )}
+                </>
+              )}
             </div>
             <p className="text-right text-[0.95rem] font-semibold whitespace-nowrap text-navy-900">
               {price(s.priceNet)}
               {s.billing === 'monthly' && <span className="block text-xs font-medium text-ink-muted">{t.perMonthShort}</span>}
             </p>
-            {onRemove && (
+            {onRemove && !s.scope && (
               <button
                 type="button"
                 onClick={() => onRemove(s.id)}
