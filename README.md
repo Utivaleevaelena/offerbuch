@@ -63,7 +63,7 @@ zawsze po polsku (z informacją o języku klienta).
 
 ## Logika biznesowa
 
-- Grupy wykluczające się (`exclusiveGroup`): **branding** (Mini / PRO), **website** (START / PRO),
+- Grupy wykluczające się (`exclusiveGroup`): **branding** (Mini / PRO), **website** (Landing page kampanijny / Strona PRO),
   **outreach** (MICRO / STANDARD / GROWTH) — wybór wariantu automatycznie zastępuje poprzedni.
 - Usługi jednorazowe i miesięczne (`billing`) są sumowane osobno; przy braku pakietu miesięcznego
   wyświetlana jest tylko „Suma netto”.

@@ -91,10 +91,27 @@ export const en: ProposalTranslation = {
     },
     website: {
       navLabel: 'Website',
-      label: 'New website',
-      roadmapLine: 'A website that leads clients to get in touch.',
-      eyebrow: 'New website',
+      label: 'Landing page or new website',
+      roadmapLine: 'A campaign landing page or a new sales website.',
+      eyebrow: 'Landing page or new website',
       title: "A website that doesn't just present the firm, but leads potential clients to get in touch.",
+      intro: [
+        'There are two paths to choose from: a campaign landing page that works alongside the current website, or a new, extended sales website.',
+      ],
+      blocks: [
+        {
+          items: [
+            {
+              title: 'What is a landing page?',
+              text: 'A separate, single-page site built for one campaign and one audience — e.g. management boards of companies from a selected industry or region. It has one goal: to lead the visitor to get in touch or sign up for an accounting diagnosis.',
+            },
+            {
+              title: 'Your current website stays unchanged.',
+              text: 'The landing page works alongside the firm’s existing website — under a separate address or subdomain. We don’t rebuild the current site; campaign traffic (e.g. from B2B Email Outreach) is directed to the landing page.',
+            },
+          ],
+        },
+      ],
       options: { hint: 'Choose one of the two options.', changeMessage: 'Website option changed' },
     },
     outreach: {
@@ -263,35 +280,39 @@ export const en: ProposalTranslation = {
       ],
       cta: 'Add session to offer',
     },
-    'website-start': {
-      title: 'Website START',
-      summaryTitle: 'Website START',
-      tag: 'Image & sales',
-      description: 'A modern image-and-sales website presenting the key elements of the brand and offer.',
+    'landing-campaign': {
+      title: 'Campaign landing page',
+      summaryTitle: 'Campaign landing page',
+      variant: 'Landing page',
+      tag: 'Current website stays as is',
+      description:
+        'A single page built for one specific target group and one specific campaign. The firm’s current website stays unchanged.',
       includes: [
-        'UX structure',
-        'copywriting for core sections',
-        'visual design',
-        'implementation',
-        'mobile version',
-        'contact form',
-        'basic SEO',
-        'CTA',
-        'preparation for further B2B communication',
+        'target group and campaign goal analysis',
+        'structure built around one offer and one action (CTA)',
+        'copywriting tailored to the selected audience',
+        'visual design consistent with the brand',
+        'implementation and mobile version',
+        'contact form / sign-up for the diagnosis',
+        'basic SEO and analytics setup',
+        'preparation for a B2B Email Outreach or ad campaign',
       ],
       extraList: {
-        label: 'Suggested sections',
-        items: ['Hero', 'Services', 'Why us', 'About us', 'How we work', 'Contact'],
+        label: 'Example landing page sections',
+        items: ['Headline with a promise', 'Client problem', 'How we help', 'Why us', 'Case study', 'FAQ', 'Form'],
       },
-      cta: 'I choose START',
+      cta: 'I choose the landing page',
     },
     'website-pro': {
       title: 'Website PRO',
       summaryTitle: 'Website PRO',
       tag: 'Recommended for B2B',
       description: 'An extended sales website built for larger companies and further outbound campaigns.',
-      includesLead: 'Everything in START, plus:',
       includes: [
+        'new UX structure for the whole website',
+        'visual design and implementation',
+        'mobile version',
+        'contact form',
         'extended structure',
         'more subpages',
         'more extensive copywriting',

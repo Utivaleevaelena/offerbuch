@@ -83,7 +83,7 @@ function BlockView({ block }: { block: Block }) {
 
     case 'notes':
       return (
-        <div className="-mt-5 grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 not-first:-mt-5 md:grid-cols-2">
           {block.items.map((note, i) => (
             <p key={i} className="flex gap-3 rounded-xl bg-white/70 p-4 text-sm text-ink-muted ring-1 ring-line">
               <Icon name={note.icon} size={18} className="mt-0.5 shrink-0 text-gold" />

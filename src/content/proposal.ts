@@ -133,33 +133,32 @@ const services: Service[] = [
 
   // ───────────────────────── ETAP 4 ─────────────────────────
   {
-    id: 'website-start',
+    id: 'landing-campaign',
     category: 'website',
-    title: 'Strona START',
-    summaryTitle: 'Strona START',
-    variant: 'START',
+    title: 'Landing page kampanijny',
+    summaryTitle: 'Landing page kampanijny',
+    variant: 'Landing page',
     priceNet: 1500,
     billing: 'one_time',
     exclusiveGroup: 'website',
-    tag: 'Wizerunkowo-sprzedażowa',
+    tag: 'Obecna strona bez zmian',
     description:
-      'Nowoczesna strona wizerunkowo-sprzedażowa prezentująca najważniejsze elementy marki i oferty.',
+      'Jedna strona przygotowana pod konkretną grupę docelową i konkretną kampanię. Obecna strona Kancelarii pozostaje bez zmian.',
     includes: [
-      'struktura UX',
-      'copywriting podstawowych sekcji',
-      'projekt wizualny',
-      'wdrożenie',
-      'wersja mobilna',
-      'formularz kontaktowy',
-      'podstawowe SEO',
-      'CTA',
-      'przygotowanie pod dalszą komunikację B2B',
+      'analiza grupy docelowej i celu kampanii',
+      'struktura pod jedną ofertę i jedno działanie (CTA)',
+      'copywriting dopasowany do wybranej grupy odbiorców',
+      'projekt wizualny spójny z marką',
+      'wdrożenie i wersja mobilna',
+      'formularz kontaktowy / zapis na diagnozę',
+      'podstawowe SEO i podpięcie analityki',
+      'przygotowanie pod kampanię B2B Email Outreach lub reklamy',
     ],
     extraList: {
-      label: 'Sugerowane sekcje',
-      items: ['Hero', 'Oferta', 'Dlaczego my', 'O nas', 'Jak pracujemy', 'Kontakt'],
+      label: 'Przykładowe sekcje landing page',
+      items: ['Nagłówek z obietnicą', 'Problem klienta', 'Jak pomagamy', 'Dlaczego my', 'Case study', 'FAQ', 'Formularz'],
     },
-    cta: 'Wybieram START',
+    cta: 'Wybieram landing page',
   },
   {
     id: 'website-pro',
@@ -174,8 +173,11 @@ const services: Service[] = [
     recommended: true,
     description:
       'Rozbudowana strona sprzedażowa przygotowana pod większe spółki i dalsze kampanie outbound.',
-    includesLead: 'Wszystko z wariantu START, a dodatkowo:',
     includes: [
+      'nowa struktura UX całej strony',
+      'projekt wizualny i wdrożenie',
+      'wersja mobilna',
+      'formularz kontaktowy',
       'rozbudowana struktura',
       'więcej podstron',
       'bardziej rozbudowany copywriting',
@@ -349,10 +351,30 @@ const stages: Stage[] = [
     id: 'website',
     anchor: 'strona',
     navLabel: 'Strona',
-    label: 'Nowa strona internetowa',
-    roadmapLine: 'Strona, która prowadzi klienta do kontaktu.',
-    eyebrow: 'Nowa strona internetowa',
+    label: 'Landing page lub nowa strona',
+    roadmapLine: 'Landing pod kampanię albo nowa strona sprzedażowa.',
+    eyebrow: 'Landing page lub nowa strona',
     title: 'Strona, która nie tylko prezentuje kancelarię, ale prowadzi potencjalnego klienta do kontaktu.',
+    intro: [
+      'Do wyboru są dwie drogi: kampanijny landing page, który działa obok obecnej strony, albo nowa, rozbudowana strona sprzedażowa.',
+    ],
+    blocks: [
+      {
+        type: 'notes',
+        items: [
+          {
+            icon: 'target',
+            title: 'Czym jest landing page?',
+            text: 'To osobna, jednostronicowa strona przygotowana pod jedną kampanię i jedną grupę odbiorców — np. zarządy spółek z wybranej branży lub regionu. Ma jeden cel: doprowadzić odbiorcę do kontaktu lub zapisu na diagnozę księgowości.',
+          },
+          {
+            icon: 'shield',
+            title: 'Obecna strona zostaje bez zmian.',
+            text: 'Landing działa obok istniejącej strony Kancelarii — pod osobnym adresem lub subdomeną. Nie przebudowujemy obecnej witryny; to na landing kierujemy ruch z kampanii (np. B2B Email Outreach).',
+          },
+        ],
+      },
+    ],
     options: {
       hint: 'Wybierz jeden z dwóch wariantów.',
       showPriceRange: true,
