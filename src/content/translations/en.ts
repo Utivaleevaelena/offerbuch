@@ -147,27 +147,6 @@ export const en: ProposalTranslation = {
       ],
       blocks: [
         {
-          groups: [
-            {
-              title: 'Possible company selection criteria',
-              items: [
-                'PKD (business activity code)',
-                'region / voivodeship',
-                'revenue / turnover',
-                'company size',
-                'legal form',
-                'tender activity',
-                'active recruitment',
-                'other agreed criteria',
-              ],
-            },
-            {
-              title: 'Decision-makers',
-              items: ['CEO / President of the Board', 'owner', 'CFO', 'Finance Director', 'Board Member', 'other selected roles'],
-            },
-          ],
-        },
-        {
           label: 'How the campaign works',
           steps: ['Company selection', 'Database and contacts', 'Personalisation', 'Email', 'Follow-up', 'Interested lead'],
         },
@@ -188,7 +167,7 @@ export const en: ProposalTranslation = {
         {
           items: [
             { title: 'Where do leads go?', text: 'CRM, email or another agreed tool.' },
-            { text: 'Active sending starts once the infrastructure is ready — approximately from day 15 of the project.' },
+            { text: 'Active sending starts once the infrastructure is ready — approximately from day 15–21 of the project.' },
           ],
         },
         {

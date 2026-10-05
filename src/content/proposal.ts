@@ -525,30 +525,6 @@ const stages: Stage[] = [
     ],
     blocks: [
       {
-        type: 'chips',
-        groups: [
-          {
-            title: 'Możliwe kryteria doboru firm',
-            icon: 'target',
-            items: [
-              'PKD',
-              'region / województwo',
-              'przychody / obroty',
-              'wielkość firmy',
-              'forma prawna',
-              'aktywność przetargowa',
-              'aktywna rekrutacja',
-              'inne uzgodnione kryteria',
-            ],
-          },
-          {
-            title: 'Osoby decyzyjne',
-            icon: 'users',
-            items: ['Prezes Zarządu', 'właściciel', 'CFO', 'Dyrektor Finansowy', 'Członek Zarządu', 'inne wybrane stanowiska'],
-          },
-        ],
-      },
-      {
         type: 'process',
         label: 'Jak działa kampania',
         steps: ['Selekcja firm', 'Baza i kontakty', 'Personalizacja', 'Email', 'Follow-up', 'Zainteresowany lead'],
@@ -574,7 +550,7 @@ const stages: Stage[] = [
           { icon: 'inbox', title: 'Gdzie trafiają leady?', text: 'CRM, email lub inne uzgodnione narzędzie.' },
           {
             icon: 'info',
-            text: 'Aktywne wysyłki rozpoczynają się po przygotowaniu infrastruktury, orientacyjnie od 15. dnia projektu.',
+            text: 'Aktywne wysyłki rozpoczynają się po przygotowaniu infrastruktury, orientacyjnie od 15.–21. dnia projektu.',
           },
         ],
       },
