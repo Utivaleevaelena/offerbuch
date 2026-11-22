@@ -12,18 +12,18 @@ interface Props {
 export function SequencerControls(p: Props) {
   const playing = p.status === 'playing'
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2.5" role="group" aria-label="Odtwarzacz">
+    <div className="flex flex-wrap items-center justify-center gap-2" role="group" aria-label="Odtwarzacz">
       <button className={`btn btn-play${playing ? ' is-active' : ''}`} onClick={p.onPlay} disabled={playing} aria-label="Odtwórz">
-        <Play size={22} fill="currentColor" />
+        <Play size={18} fill="currentColor" />
       </button>
       <button className="btn" onClick={p.onPause} disabled={!playing} aria-label="Pauza">
-        <Pause size={20} fill="currentColor" />
+        <Pause size={16} fill="currentColor" />
       </button>
       <button className="btn" onClick={p.onRandom} aria-label="Losowa melodia">
-        <Dices size={20} />
+        <Dices size={16} />
       </button>
       <button className="btn" onClick={p.onClear} aria-label="Wyczyść">
-        <Eraser size={20} />
+        <Eraser size={16} />
       </button>
     </div>
   )

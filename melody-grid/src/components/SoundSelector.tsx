@@ -3,10 +3,10 @@ import type { ReactNode } from 'react'
 import type { PresetId } from '../lib/types'
 
 const SOUNDS: Array<{ id: PresetId; name: string; icon: ReactNode }> = [
-  { id: 'piano', name: 'Piano', icon: <Piano size={20} /> },
-  { id: 'synth', name: 'Syntezator', icon: <Waves size={20} /> },
-  { id: 'bell', name: 'Dzwonek', icon: <Bell size={20} /> },
-  { id: 'marimba', name: 'Marimba', icon: <Drum size={20} /> },
+  { id: 'piano', name: 'Piano', icon: <Piano size={16} /> },
+  { id: 'synth', name: 'Syntezator', icon: <Waves size={16} /> },
+  { id: 'bell', name: 'Dzwonek', icon: <Bell size={16} /> },
+  { id: 'marimba', name: 'Marimba', icon: <Drum size={16} /> },
 ]
 
 interface Props {
@@ -20,7 +20,7 @@ export function SoundSelector({ value, onChange }: Props) {
       {SOUNDS.map((s) => (
         <button key={s.id} role="radio" aria-checked={value === s.id} className={`sound${value === s.id ? ' sel' : ''}`} onClick={() => onChange(s.id)}>
           {s.icon}
-          <span className="text-xs font-semibold">{s.name}</span>
+          <span className="text-[0.68rem] font-semibold">{s.name}</span>
         </button>
       ))}
     </div>

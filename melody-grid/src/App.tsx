@@ -85,13 +85,13 @@ export default function App() {
   return (
     <>
       <div className="backdrop" />
-      <main className="mx-auto flex min-h-dvh w-full max-w-[560px] flex-col justify-center px-4 py-8 sm:px-6">
-        <h1 className="mb-4 text-center text-2xl font-bold tracking-tight text-[#5a1f3d] sm:text-3xl">Iana Utivaleeva 1b</h1>
+      <main className="mx-auto flex min-h-dvh w-full max-w-[380px] flex-col justify-center px-4 py-6">
+        <h1 className="mb-3 text-center text-lg font-bold tracking-tight text-[#5a1f3d]">Iana Utivaleeva 1b</h1>
         {intro && <Intro />}
-        <section className="panel p-3 sm:p-5">
+        <section className="panel p-2.5">
           <MusicalGrid steps={STEPS} grid={grid} step={step} onSet={setCell} />
         </section>
-        <section className="mt-5 space-y-5">
+        <section className="mt-4 space-y-3">
           <SequencerControls
             status={status}
             onPlay={play}
