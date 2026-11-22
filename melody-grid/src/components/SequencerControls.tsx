@@ -1,17 +1,12 @@
-import { Dices, Download, Eraser, FolderOpen, Pause, Play, Save } from 'lucide-react'
+import { Dices, Eraser, Pause, Play } from 'lucide-react'
 import type { Status } from '../hooks/usePlayer'
 
 interface Props {
   status: Status
-  hasSaved: boolean
-  exporting: boolean
   onPlay: () => void
   onPause: () => void
   onClear: () => void
   onRandom: () => void
-  onSave: () => void
-  onLoad: () => void
-  onExport: () => void
 }
 
 export function SequencerControls(p: Props) {
@@ -29,16 +24,6 @@ export function SequencerControls(p: Props) {
       </button>
       <button className="btn" onClick={p.onClear} aria-label="Wyczyść">
         <Eraser size={20} />
-      </button>
-      <span className="mx-1 hidden h-6 w-px bg-[#d98aa9] sm:block" />
-      <button className="btn" onClick={p.onSave} aria-label="Zapisz">
-        <Save size={19} />
-      </button>
-      <button className="btn" onClick={p.onLoad} disabled={!p.hasSaved} aria-label="Wczytaj">
-        <FolderOpen size={19} />
-      </button>
-      <button className="btn" onClick={p.onExport} disabled={p.exporting} aria-label="Eksportuj WAV">
-        <Download size={19} />
       </button>
     </div>
   )

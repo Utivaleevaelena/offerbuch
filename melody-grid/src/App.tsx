@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AudioEngine } from './audio/AudioEngine'
-import { renderWav } from './audio/wav'
 import { Intro } from './components/Intro'
 import { MusicalGrid } from './components/MusicalGrid'
 import { SequencerControls } from './components/SequencerControls'
 import { Slider } from './components/Slider'
 import { SoundSelector } from './components/SoundSelector'
-import { Toast } from './components/Toast'
 import { usePlayer } from './hooks/usePlayer'
-import { decodeGrid, emptyGrid, encodeGrid, gridFromSteps, gridIsEmpty, randomGrid } from './lib/grid'
-import { hasSavedComposition, loadComposition, saveComposition } from './lib/storage'
+import { emptyGrid, gridFromSteps, randomGrid } from './lib/grid'
 import { MAX_BPM, MIN_BPM, type Grid, type PresetId } from './lib/types'
 
 const STEPS = 8
@@ -23,9 +20,6 @@ export default function App() {
   const [bpm, setBpm] = useState(110)
   const [preset, setPreset] = useState<PresetId>('piano')
   const [intro, setIntro] = useState(true)
-  const [toast, setToast] = useState<string | null>(null)
-  const [saved, setSaved] = useState(hasSavedComposition)
-  const [exporting, setExporting] = useState(false)
 
   const player = usePlayer(engine, { mode: 'step', steps: STEPS, grid, free: [], bpm, preset, loop: true })
   const { status, step } = player
@@ -34,14 +28,6 @@ export default function App() {
     engine.setVolume(VOLUME)
   }, [engine])
   useEffect(() => () => engine.dispose(), [engine])
-
-  useEffect(() => {
-    if (!toast) return
-    const t = window.setTimeout(() => setToast(null), 2000)
-    return () => window.clearTimeout(t)
-  }, [toast])
-
-  const say = useCallback((m: string) => setToast(m), [])
 
   const setCell = useCallback(
     (row: number, col: number, on: boolean) => {
@@ -73,42 +59,6 @@ export default function App() {
     setPreset(p)
     engine.ensure()
     engine.preview(2, p)
-  }
-
-  const save = () => {
-    const ok = saveComposition({ v: 1, mode: 'step', steps: STEPS, grid: encodeGrid(grid), free: [], bpm, preset, loop: true, volume: VOLUME })
-    if (ok) setSaved(true)
-    say(ok ? 'Zapisano' : 'Nie udało się zapisać')
-  }
-
-  const load = () => {
-    const c = loadComposition()
-    const g = c && decodeGrid(c.grid)
-    if (!c || !g) return say('Brak zapisanej melodii')
-    setGrid(g)
-    setBpm(c.bpm)
-    setPreset(c.preset)
-    say('Wczytano')
-  }
-
-  const exportWav = async () => {
-    if (gridIsEmpty(grid, STEPS)) return say('Brak melodii do eksportu')
-    setExporting(true)
-    try {
-      const blob = await renderWav({ mode: 'step', steps: STEPS, grid, free: [], bpm, preset, loop: true }, VOLUME)
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'melody.wav'
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      setTimeout(() => URL.revokeObjectURL(url), 10_000)
-    } catch {
-      say('Eksport nie powiódł się')
-    } finally {
-      setExporting(false)
-    }
   }
 
   // Space = Play / Pause
@@ -144,21 +94,15 @@ export default function App() {
         <section className="mt-5 space-y-5">
           <SequencerControls
             status={status}
-            hasSaved={saved}
-            exporting={exporting}
             onPlay={play}
             onPause={player.pause}
             onClear={() => setGrid(emptyGrid())}
             onRandom={random}
-            onSave={save}
-            onLoad={load}
-            onExport={exportWav}
           />
           <Slider label="Tempo" value={bpm} min={MIN_BPM} max={MAX_BPM} onChange={setBpm} />
           <SoundSelector value={preset} onChange={changePreset} />
         </section>
       </main>
-      <Toast message={toast} />
     </>
   )
 }
