@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import type { PresetId } from '../lib/types'
 
 const SOUNDS: Array<{ id: PresetId; name: string; icon: ReactNode }> = [
-  { id: 'piano', name: 'Piano', icon: <Piano size={16} /> },
+  { id: 'piano', name: 'Pianino', icon: <Piano size={16} /> },
   { id: 'synth', name: 'Syntezator', icon: <Waves size={16} /> },
   { id: 'bell', name: 'Dzwonek', icon: <Bell size={16} /> },
   { id: 'marimba', name: 'Marimba', icon: <Drum size={16} /> },
