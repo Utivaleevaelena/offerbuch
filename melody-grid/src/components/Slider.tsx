@@ -22,7 +22,7 @@ export function Slider({ label, value, min, max, onChange }: Props) {
         style={{ '--pct': `${pct}%` } as CSSProperties}
         onChange={(e) => onChange(Number(e.target.value))}
       />
-      <span className="w-9 flex-none text-right font-mono text-sm font-semibold text-[#c2557f]">{value}</span>
+      <span className="w-9 flex-none text-right font-mono text-sm font-semibold text-[#8f2f5a]">{value}</span>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 export type Mode = 'step' | 'free'
-export type PresetId = 'piano' | 'synth' | 'bell' | 'retro'
+export type PresetId = 'piano' | 'synth' | 'bell' | 'marimba'
 
 export const ROWS = 8
 export const STEP_OPTIONS = [8, 16, 32] as const

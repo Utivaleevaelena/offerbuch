@@ -78,21 +78,21 @@ export default function App() {
   const save = () => {
     const ok = saveComposition({ v: 1, mode: 'step', steps: STEPS, grid: encodeGrid(grid), free: [], bpm, preset, loop: true, volume: VOLUME })
     if (ok) setSaved(true)
-    say(ok ? 'Saved' : 'Could not save')
+    say(ok ? 'Zapisano' : 'Nie udało się zapisać')
   }
 
   const load = () => {
     const c = loadComposition()
     const g = c && decodeGrid(c.grid)
-    if (!c || !g) return say('Nothing saved yet')
+    if (!c || !g) return say('Brak zapisanej melodii')
     setGrid(g)
     setBpm(c.bpm)
     setPreset(c.preset)
-    say('Loaded')
+    say('Wczytano')
   }
 
   const exportWav = async () => {
-    if (gridIsEmpty(grid, STEPS)) return say('Nothing to export yet')
+    if (gridIsEmpty(grid, STEPS)) return say('Brak melodii do eksportu')
     setExporting(true)
     try {
       const blob = await renderWav({ mode: 'step', steps: STEPS, grid, free: [], bpm, preset, loop: true }, VOLUME)
@@ -105,7 +105,7 @@ export default function App() {
       a.remove()
       setTimeout(() => URL.revokeObjectURL(url), 10_000)
     } catch {
-      say('Export failed')
+      say('Eksport nie powiódł się')
     } finally {
       setExporting(false)
     }
@@ -136,6 +136,7 @@ export default function App() {
     <>
       <div className="backdrop" />
       <main className="mx-auto flex min-h-dvh w-full max-w-[560px] flex-col justify-center px-4 py-8 sm:px-6">
+        <h1 className="mb-4 text-center text-2xl font-bold tracking-tight text-[#5a1f3d] sm:text-3xl">Iana Utivaleeva 1b</h1>
         {intro && <Intro />}
         <section className="panel p-3 sm:p-5">
           <MusicalGrid steps={STEPS} grid={grid} step={step} onSet={setCell} />

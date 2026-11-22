@@ -27,7 +27,7 @@ export function loadComposition(): Composition | null {
     const c = JSON.parse(raw) as Partial<Composition>
     const grid = decodeGrid(c.grid)
     if (!grid || c.v !== 1) return null
-    const presets = ['piano', 'synth', 'bell', 'retro']
+    const presets = ['piano', 'synth', 'bell', 'marimba']
     return {
       v: 1,
       mode: c.mode === 'free' ? 'free' : 'step',
