@@ -1,37 +1,28 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
 
 interface Props {
   label: string
-  icon: ReactNode
   value: number
   min: number
   max: number
-  step?: number
-  display: string
   onChange: (v: number) => void
 }
 
-export function Slider({ label, icon, value, min, max, step = 1, display, onChange }: Props) {
+export function Slider({ label, value, min, max, onChange }: Props) {
   const pct = ((value - min) / (max - min)) * 100
   return (
-    <label className="block">
-      <div className="mb-1 flex items-center justify-between">
-        <span className="label flex items-center gap-2">
-          {icon}
-          {label}
-        </span>
-        <span className="font-mono text-sm font-semibold text-cyan-300">{display}</span>
-      </div>
+    <div className="flex items-center gap-4">
       <input
         type="range"
+        aria-label={label}
         className="slider"
         min={min}
         max={max}
-        step={step}
         value={value}
         style={{ '--pct': `${pct}%` } as CSSProperties}
         onChange={(e) => onChange(Number(e.target.value))}
       />
-    </label>
+      <span className="w-9 flex-none text-right font-mono text-sm font-semibold text-[#c2557f]">{value}</span>
+    </div>
   )
 }
